@@ -94,11 +94,15 @@ pnpm dev
 |----------|---------------|
 | [`docs/Roadmap.md`](docs/Roadmap.md) | Development phases and milestones |
 | [`docs/Architecture.md`](docs/Architecture.md) | Full system design |
+| [`docs/PRD.md`](docs/PRD.md) | Product requirements and vision |
+| [`docs/Design-System.md`](docs/Design-System.md) | Visual design language |
 | [`docs/Engineering-Handbook.md`](docs/Engineering-Handbook.md) | How we write code |
 | [`docs/DATABASE.md`](docs/DATABASE.md) | Data models and schema |
 | [`docs/API.md`](docs/API.md) | API design and contracts |
 | [`docs/FEATURES.md`](docs/FEATURES.md) | Feature catalog |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | Security model |
+| [`docs/Definition-of-Done.md`](docs/Definition-of-Done.md) | Feature completion checklist |
+| [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) | Live project tracker |
 | [`docs/CHANGELOG.md`](docs/CHANGELOG.md) | Version history |
 | [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | How to contribute |
 | [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Claude's permanent memory |

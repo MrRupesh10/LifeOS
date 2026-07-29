@@ -43,12 +43,16 @@ Establish the engineering foundation before writing any code.
 - [x] `.claude/DECISIONS.md` — ADR log
 - [x] `.claude/MCP.md` — MCP server strategy
 - [x] `.claude/SKILLS.md` — Claude skill catalog
+- [x] `docs/PRD.md` — Product Requirements Document
+- [x] `docs/Design-System.md` — Visual design language specification
+- [x] `docs/Definition-of-Done.md` — Feature completion checklist
+- [x] `docs/PROJECT_STATUS.md` — Live project tracker
 
 ### Success Criteria
-- [ ] All documents written
-- [ ] Folder structure matches Architecture.md
-- [ ] Every .claude/ file is populated
-- [ ] Documentation approved by developer
+- [x] All documents written (19 total)
+- [x] Folder structure matches Architecture.md
+- [x] Every .claude/ file is populated
+- [x] Documentation approved by developer
 
 ---
 

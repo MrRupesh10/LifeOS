@@ -27,6 +27,11 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
   - `.claude/MCP.md` — MCP server strategy
   - `.claude/SKILLS.md` — Claude Skill catalog
 - Complete folder structure skeleton for full Next.js app
+- Supplementary Phase 0 documentation
+  - `docs/PRD.md` — Product Requirements Document (vision, target users, success metrics)
+  - `docs/Design-System.md` — Complete visual design language specification
+  - `docs/Definition-of-Done.md` — Feature completion checklist (14 sections)
+  - `docs/PROJECT_STATUS.md` — Live project tracker
 
 ---
 
