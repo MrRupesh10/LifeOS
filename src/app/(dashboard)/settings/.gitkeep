@@ -1,0 +1,2 @@
+# Settings route — user preferences, module config, account management.
+# Routing only. All logic in src/modules/settings/.

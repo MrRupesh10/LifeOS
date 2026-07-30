@@ -268,10 +268,10 @@ Use pnpm as package manager.
 
 ---
 
-## ADR-008: Zustand Only When Necessary
+## ADR-008: Zustand Only When Needed
 
 **Date:** 2026-07-29  
-**Status:** Pre
+**Status:** Accepted
 
 ### Context
 
@@ -296,4 +296,221 @@ Most "state management" in React is actually server-sourced data caching dressed
 
 ---
 
-*Last updated: 2026-07-29 — LifeOS Phase 0*
+## ADR-009: Zustand for Sidebar Collapse State
+
+**Date:** 2026-07-30  
+**Status:** Accepted
+
+### Context
+
+The sidebar collapse state is a **cross-tree UI concern**: the Header needs it (hamburger/mobile toggle), the Sidebar needs it (width, icon-only mode), the AppShell needs it (content margin). Prop drilling this data 3+ levels deep violates Separation of Concern and the single-direction data flow principle.
+
+### Decision: Zustand store at `src/stores/ui/sidebar-store.ts`
+
+- `isCollapsed: boolean` — desktop sidebar collapse (64px vs 256px)
+- `isMobileOpen: boolean` — mobile drawer overlay open/close
+- Actions: `openMobile()`, `closeMobile()`, `toggleCollapsed()`
+- No provider required — components subscribe directly via `useSidebarStore()`
+- Mobile drawer closes on: link click, backdrop click (via event bubbling), Escape key (`useEffect` + `document.addEventListener("keydown")`)
+
+### Why Zustand over React Context
+
+- Context with `useContext` forces re-render of **entire** component subtree on any state change
+- Zustand's selector pattern means only components reading `isCollapsed` re-render when it changes
+- Zero providers to add to the component tree — the store is a module-level singleton
+
+### Tradeoffs
+
+| Pro | Con |
+|-----|-----|
+| Fine-grained subscriptions (no wasted renders) | Another pattern to learn (small API surface) |
+| No provider component needed in the tree | Must namespace stores carefully (`stores/ui/`, `stores/data/`) |
+| Simple API — 3 functions on the store | Not suitable for server-fetched data (TanStack Query domain) |
+
+---
+
+## ADR-010: next-themes for Theme Persistence
+
+**Date:** 2026-07-30  
+**Status:** Accepted
+
+### Context
+
+A dark/light theme toggle must:
+1. Apply immediately without a flash of light theme on page load (SSR-safe)
+2. Persist across page refreshes
+3. Respect the OS-level preference (`prefers-color-scheme`)
+4. Work with Tailwind v4's dark mode variant (`dark:` via `@custom-variant`)
+
+### Decision: next-themes with `attribute="class"` strategy
+
+- **Storage:** Cookie (read by server for SSR-safe initial render) + `localStorage` (client persistence)
+- **Default:** `defaultTheme="system"` — follows OS preference until user explicitly picks
+- **Anti-flash:** `disableTransitionOnChange` — prevents the 200ms CSS transition flash when toggling
+- **System option:** `enableSystem` — user sees "System" as the third option alongside Light/Dark
+
+### Why next-themes
+
+- **Flash prevention is the hard problem.** The `<script>` tag injected into `<head>` reads the cookie **before** the first paint. Manual cookie implementations almost always flash because React can't inject a blocking script before render.
+- **Used by shadcn/ui**, Vercel's Next.js docs, and the broader ecosystem
+- **Zero-config drop-in** — wraps `<html>`, exports `useTheme()`
+
+### Implementation Note
+
+We use a shadcn DropdownMenu with three radio-style options (Light / Dark / System) — not the common two-way toggle button. This gives the user a visible menu with all choices at once: one click instead of 1–3 blind clicks.
+
+### Alternatives Considered
+
+| Alternative | Why Not |
+|-------------|---------|
+| Manual cookie + `<script>` | Flash-free requires a blocking script before React hydrates; next-themes already solved this |
+| Tailwind forced dark mode | No user preference persistence; ignores OS system preference |
+| CSS `prefers-color-shade` only | User can't override; company palette may not match OS |
+
+---
+
+## ADR-011: Geist Font via next/font/google
+
+**Date:** 2026-07-30  
+**Status:** Accepted
+
+### Decision: Geist Sans (primary) + Geist Mono (code)
+
+Both loaded from `next/font/google` with CSS custom properties: `--font-sans` and `--font-mono`.
+
+### Why Geist
+
+1. **Vercel's design language typography.** Geist was designed for clean digital interfaces at Vercel — it's the default font in new Next.js projects
+2. **Performance.** `next/font/google` at loading automatically self-hosts at build time, serving only the used subsets with `font-display:swap`. Zero external Google Font requests in production
+3. **Matching mono available.** Geist Mono for code, terminal, JSON previews — consistent family instead of mixing sans+mono from different designers
+4. **Inspired by Linear** — the design we admire uses a minimal, slightly condensed sans-serif profile: Geist hits same notes
+
+### Alternatives Considered
+
+| Alternative | Why Not |
+|-------------|---------|
+| **Inter** | Good, but Geist is newer and purpose-built for Next.js. Inter has no matching mono variant |
+| **System font stack** | Inconsistent rendering across macOS/Windows/Linux; different sizing per OS |
+| **JetBrains Mono** | Excellent monospace, but no matching sans — we'd need two families, two design languages |
+| **IBM Plex** | More distinctive character; Geist is cleaner for the neutral, calendar-driven aesthetic we want |
+
+---
+
+## ADR-012: shadcn/ui New York Style (base-nova)
+
+**Date:** 2026-07-30  
+**Status:** Accepted
+
+### Decision: New York style ('base-nova'), Neutral color palette, CSS custom variables
+
+Selected at `pnpm dlx shadcn@latest init` time and locked into `components.json`.
+
+### Why New York (base-nova)
+
+1. **More minimal than Default** — flatter, less border-radius, less busy corners. Matches the Apple/Linear/Notion aesthetic
+2. **Base UI** — shadcn/ui v2 uses `@base-ui/react` (not Radix UI). Base UI is the React 19 primitives suite built by MUI (the MUI team). Radix is sunset. We want future-proof component primitives
+3. **Neutral hue** — no forced blue/purple. We build our own palette on a neutral base
+4. **CSS variables for everything** — changing the entire color scheme requires editing ~8 lines in `_globals.css` with oklch
+
+### Connection Note
+
+- shadcn v2 + Base UI means **components do NOT support `asChild`** (that was a Radidix compound). Base UI uses a `render` prop instead.
+- **Button** does not accept `asChild`. To render a `<button>` as a `<Link>`, use `render={<Link href="...">...</Link>}` or use a plain
+- Installed components: Button, Dialog, DropdownMenu. Install new shadcn components with `pnpm dlx shadcn@latest add <name> --yes --overwrite`.
+
+### Alternatives
+
+| Alternative | Why Not |
+|-------------|---------|
+| Default (Radix) | Less modern visual; Radix will be superseded by Base UI long-term |
+| Zinc/Slate palette | Close but not neutral; neutral gives us fuller control over light/dark mapping |
+| Custom CSS (no library) | Reinventing accessible primitives (Menu focus traps, Dialog esc, etc.) is wasted engineering |
+
+---
+
+## ADR-013: Sonner for Toast Notifications
+
+**Date:** 2026-07-30  
+**Status:** Accepted
+
+### Context
+
+LifeOS needs toast notifications for: action confirmations ("Task created"), error alerts ("Failed to save"), and warnings. The library must:
+- Professional out of the box — no developer-needed customization to look good
+- Support light and dark themes seamlessly
+- Be small — it's a notification utility, not a UI framework
+
+### Decision: Sonner
+
+- Mounted globally inside `<AppProviders>` at bottom-right with `closeButton`, `richColors`, `theme="system"`
+- `richColors` gives professional color-coded states (green success, red error, sie warning, blue info)
+- `theme="system"` follows `next-themes` theme automatically — the toasts respect the current theme
+- `closeButton` provides explicit dismiss alongside auto-dismiss timer
+
+### Server Action Integration Pattern
+
+Server Actions return `{ data } | { error }` union types. Client hooks call `toast.error(error)` or `toast.success(msg)` based on the return type
+ — no boilerplate in the module code.
+
+### Alternatives Considered
+
+| Alternative | Why Not Selected |
+|-------------|-----------------|
+| **react-hot-toast** | Functional but less polished defaults; Sour is prettier with zero effort |
+| **Radix Toast** | Full control but requires building the UI wrapper — time suck for Phase 1 |
+| **Native alert()** | Unacceptable UX for a professional application |
+
+---
+
+## ADR-014: TanStack Query — Server-Safe Factory Pattern
+
+**Date:** 2026-07-30  
+**Status:** Accepted
+
+### Context
+
+TanStack Query's default "one global QueryClient" pattern causes cross-request data leaks on the server: if you reuse a single QueryClient, user A's prefetched data can leak into user B's rendered response. We need a pattern that:
+1. Creates a fresh QueryClient for **each server request**
+2. Reuses a single QueryClient instance across **client-side renders** (performance)
+3. Allows server-side prefectching in the future (those results dehydrate to the client)
+
+### Decision: Factory Pattern in `src/providers/query.tsx`
+
+```typescript
+function makeQueryClient(): QueryClient {
+  return new QueryClient({
+    defaultOptions: { queries: { staleTime: 60_000 } }
+  })
+}
+
+let browserQueryClient: QueryClient | undefined
+
+function getQueryClient(): QueryClient {
+  if (typeof window === "undefined") return makeQueryClient()
+  // Server: fresh client per request → no cross-request leakage
+  if (!browserQueryClient) browserQueryClient = makeQueryClient()
+  // Client: singleton → one instance for the lifetime of the tab
+  return browserQueryClient
+}
+```
+
+- **`typeof window === "undefine"`** → server → `makeQueryClient()` creates a new instance per request
+- **Browser** → singleton pattern → reuses the same instance across renders
+- **`staleTime`: 60 seconds** — data stays "fresh" for 1 minute; prevents unnecessary network requests on rapid navigation
+- **`straightOnWindow Focus: false`** — in baby
+- Don't refetch data when the user tabs back in (MUSTUNE — our data doesn't change that fast)
+
+### Why Not Just `new QueryClient({ ... })` Inline?
+
+That creates a new client on every React render — so every component re-render destroys the cache and creates a new one. The factory means: **create once, resets**. Inline `new` means: **create every time, waste O of cache work**.
+
+### Why Not Skip TanStack Query and Use `fetch()` in Server Components Only?
+
+- RSC `fetch()` covers server-side data only
+- Client-side mutations (createTask, toggleHabit) need cache invalidation
+- Window-`useEffect` fetch loops are the "fetch on mount" anti-pattern
+- TanStack Query handlesities, polling, retry, garbage collection — all of which LifeOS grows into
+
+---
+
+*Last updated: 2026-07-30 — Life Thin Phase 1*

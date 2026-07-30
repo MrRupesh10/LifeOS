@@ -1,0 +1,1 @@
+# AI provider implementations — one adapter per backend (nim.ts, ollama.ts, openrouter.ts, cohere.ts).

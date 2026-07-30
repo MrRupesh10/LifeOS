@@ -1,0 +1,2 @@
+# Habits route — habit tracker, streak calendar.
+# Routing only. All logic in src/modules/habits/.

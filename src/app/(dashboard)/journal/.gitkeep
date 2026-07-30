@@ -1,0 +1,2 @@
+# Journal route — daily entries, markdown editor.
+# Routing only. All logic in src/modules/journal/.

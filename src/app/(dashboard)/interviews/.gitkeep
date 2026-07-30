@@ -1,0 +1,2 @@
+# Interviews route — interview prep tracker, question bank.
+# Routing only. All logic in src/modules/interviews/.

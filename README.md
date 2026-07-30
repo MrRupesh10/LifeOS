@@ -31,105 +31,161 @@ LifeOS fixes that. It's **one app, one experience, one data model**, where every
 
 ---
 
-## Tech Stack
+## Tech Stack (Active)
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Next.js 15 (App Router), React 19, TypeScript |
-| **Styling** | Tailwind CSS, shadcn/ui, Framer Motion |
-| **Backend** | Next.js Server Actions, Route Handlers |
-| **Auth** | Better Auth |
-| **Database** | PostgreSQL (Neon Serverless), Drizzle ORM |
-| **Validation** | Zod |
-| **State** | TanStack Query, Zustand (when needed) |
-| **Charts** | Recharts |
-| **Package Manager** | pnpm |
-| **Deployment** | Vercel |
+| Layer | Technology | Key Detail |
+|-------|-----------|-----------|
+| **Framework** | Next.js 15.5 | App Router, route groups, Server Components |
+| **Styling** | Tailwind CSS v4 | CSS-based `@theme inline`, NO `tailwind.config.ts` |
+| **UI Primitives** | shadcn/ui v2 + `@base-ui/react` | New York base-nova, neutral colors |
+| **Fonts** | Geist Sans + Geist Mono | `next/font/google` with CSS variables |
+| **Icons** | Lucide React | 1,200+ icons, tree-shaken |
+| **Theme** | next-themes | Class strategy, system-default, flash-free |
+| **Auth** | Better Auth (Phase 3) | Placeholder only — not wired yet |
+| **Database** | PostgreSQL + Drizzle ORM (Phase 4) | Placeholder only — not wired yet |
+| **Validation** | Zod 4 | Shared client + server schemas |
+| **State** | Zustand (sidebar), TanStack Query (server cache) | ADR-009, ADR-014 |
+| **Notifications** | Sonner | Global `<Toaster>` mounted |
+| **Forms** | React Hook Form + @hookform/resolvers | For all user input |
+| **Package Manager** | pnpm 11 | `pnpm-workspace.yaml` with `allowBuilds` |
+| **CI/CD** | Vercel (future) | GitHub integration |
+| **Lint/Format** | ESLint 9 + Prettier 3 | Pre-commit via Husky + lint-staged |
+| **Env** | @t3-oss/env-nextjs | Zod-powered, fail-fast |
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/MrRupesh10/LifeOS.git
+cd LifeOS
+cp .env.example .env.local    # Set DATABASE_URL
+pnpm install
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+### Available Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `pnpm dev` | Start development server |
+| `pnpm build` | Production build |
+| `pnpm start` | Start production server |
+| `pnpm lint` | Run ESLint |
+| `pnpm format` | Format with Prettier |
+| `pnpm format:check` | Check formatting |
+| `pnpm typecheck` | TypeScript type checking |
+
+### All Gates Passed
+
+```
+TypeScript  pnpm typecheck   — ✅
+ESLint      pnpm lint        — ✅
+Prettier    pnpm format:check — ✅
+Build       pnpm build       — ✅
+```
 
 ---
 
 ## Project Structure
 
 ```
-LifeOS/
-├── src/
-│   ├── app/            # Next.js App Router (routing only)
-│   ├── modules/         # Feature modules (isolated, independent)
-│   ├── components/      # Shared UI (primitives, layout, shared)
-│   ├── lib/             # Infrastructure (db, auth, email, ai, utils)
-│   ├── hooks/           # Shared React hooks
-│   ├── config/          # App configuration
-│   ├── types/           # Global types
-│   ├── validation/       # Shared Zod schemas
-│   ├── providers/       # React context providers
-│   └── styles/           # Global CSS
-├── docs/                 # Complete documentation
-├── .claude/              # Claude memory and configuration
-├── tests/                # Test suites
-├── mcp/                  # MCP servers (future)
-└── skills/               # Claude skills (future)
+src/
+├── app/                 # Routing only (no business logic) — Next.js App Router
+│   ├── layout.tsx       Root layout: fonts + AppProviders
+│   ├── (marketing)/     Public landing page (no sidebar)
+│   └── (dashboard)/     Authenticated pages (AppShell with sidebar + header)
+├── modules/              Feature modules — isolated, independent, removable
+├── components/
+│   ├── ui/             shadcn/ui primitives (Button, Dialog, DropdownMenu)
+│   ├── layout/         App shell chrome (Sidebar, Header, AppShell, ThemeToggle)
+│   └── shared/         Cross-module components (CommandPalette)
+├── lib/
+│   ├── config/         Configuration (env validation, database, auth)
+│   └── utils.ts        Pure utilities (cn helper)
+├── stores/ui/           Zustand stores (sidebar collapse)
+├── providers/           AppProviders composition root (Theme + Query + Sonner)
+├── config/              Application configuration (site, navigation, layout)
+├── types/              Global TypeScript types
+└── hooks/              Shared React hooks
 ```
-
-See `docs/Architecture.md` for the full system design.
 
 ---
 
-## Quick Start
+## Navigation
 
-> **Note:** The project is in **Phase 0 — Documentation**. Code will begin in Phase 1.
+14 modules are registered in the navigation structure:
 
-```bash
-# Coming soon (Phase 1):
-git clone https://github.com/username/LifeOS.git
-cd LifeOS
-pnpm install
-pnpm dev
-```
+| Section | Modules |
+|---------|---------|
+| **Main** | Dashboard, Tasks, Habits, Journal, Notes |
+| **Planning** | Projects, Goals, Calendar |
+| **Career** | Interviews, Resume, Expenses |
+| **Review** | Analytics, Settings |
+
+All navigation lives in `src/config/navigation.ts` — the single source of truth.
 
 ---
 
 ## Documentation
 
-| Document | What It Covers |
-|----------|---------------|
+| Document | Covers |
+|----------|--------|
 | [`docs/Roadmap.md`](docs/Roadmap.md) | Development phases and milestones |
-| [`docs/Architecture.md`](docs/Architecture.md) | Full system design |
-| [`docs/PRD.md`](docs/PRD.md) | Product requirements and vision |
-| [`docs/Design-System.md`](docs/Design-System.md) | Visual design language |
-| [`docs/Engineering-Handbook.md`](docs/Engineering-Handbook.md) | How we write code |
-| [`docs/DATABASE.md`](docs/DATABASE.md) | Data models and schema |
-| [`docs/API.md`](docs/API.md) | API design and contracts |
-| [`docs/FEATURES.md`](docs/FEATURES.md) | Feature catalog |
-| [`docs/SECURITY.md`](docs/SECURITY.md) | Security model |
+| [`docs/Architecture.md`](docs/Architecture.md) | Full system architecture, diagrams, patterns |
+| [`docs/PRD.md`](docs/PRD.md) | Product Requirements Document (vision, users, success metrics) |
+| [`docs/Design-System.md`](docs/Design-System.md) | Visual design language (Apple/Linear/Notion) |
+| [`docs/Engineering-Handbook.md`](docs/Engineering-Handbook.md) | Code conventions, naming, component patterns |
+| [`docs/DATABASE.md`](docs/DATABASE.md) | Data models, schema, ER diagrams |
+| [`docs/API.md`](docs/API.md) | API design, Server Actions conventions |
+| [`docs/FEATURES.md`](docs/FEATURES.md) | Feature catalog (15 modules) |
+| [`docs/SECURITY.md`](docs/SECURITY.md) | Security model, auth flow |
 | [`docs/Definition-of-Done.md`](docs/Definition-of-Done.md) | Feature completion checklist |
-| [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) | Live project tracker |
-| [`docs/CHANGELOG.md`](docs/CHANGELOG.md) | Version history |
-| [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | How to contribute |
-| [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Claude's permanent memory |
+| [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) | Live: current sprint, what's next |
+| [`docs/CHANGELOG.md`](docs/CHANGELOG.md) | Version history (Keep a Changelog format) |
+| [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | Git flow, conventional commits, PR template |
+| [`docs/FOLDER_STRUCTURE.md`](docs/FOLDER_STRUCTURE.md) | Every directory, naming rules, module boundaries |
+| [`docs/DEPENDENCIES.md`](docs/DEPENDENCIES.md) | Every dependency, justification, alternatives |
+| [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Claude's permanent memory and technical context |
+| [`.claude/DECISIONS.md`](.claude/DECISIONS.md) | 14 Architectural Decision Records |
 
 ---
 
 ## Current Status
 
-**Phase 0 — Documentation complete.**
+**Phase 1 complete — project foundation shipped.**
 
-- [x] All engineering documentation written
-- [x] Complete folder structure designed
-- [x] Architectural decisions documented
-- [x] Claude configuration files prepared
+| Milestone | Name | Status |
+|-----------|------|--------|
+| M1 | Next.js 15 scaffold | ✅ |
+| M2 | 30 dependencies installed | ✅ |
+| M3 | shadcn/ui v2 initialized | ✅ |
+| M4 | Tooling (ESLint, Prettier, Husky) | ✅ |
+| M5 | Environment validation | ✅ |
+| M6 | Production folder structure | ✅ |
+| M7 | Core config (fonts, theme, metadata) | ✅ |
+| M8 | Base pages (error, loading, 404) | ✅ |
+| M9 | Interactive shell (sidebar, theme, ⌘K) | ✅ |
+| M10 | Providers setup | ✅ |
+| M11 | Wire everything in root layout | ✅ |
+| M12 | Verify and test | ✅ All 4 gates green |
 
-Next: **Phase 1 — Project Setup** (scaffold Next.js, install dependencies)
+**3 routes in production build:** `/` (landing), `/dashboard` (app shell), `/_not-found` (404)
 
 ---
 
 ## Author & Learning
 
-This is a flagship portfolio project by **Rupesh** — Computer Science student using this project to:
+Flagship portfolio project by **Rupesh** — Computer Science student building this as a personal daily tool and learning vehicle through production-grade engineering mentorship.
 
-1. Master full-stack engineering
-2. Build a production-grade application
-3. Learn from an experienced mentor (Claude — AI pair programmer)
-4. Create a tool for personal daily use
+### Learning Goals
+
+1. Master full-stack software engineering through real production work
+2. Build an outstanding portfolio project for interviews
+3. Learn production architecture patterns (module isolation, platform contracts)
+4. Create personal the owner uses every day
 
 ---
 
@@ -139,4 +195,4 @@ MIT
 
 ---
 
-*Last updated: 2026-07-29 — Phase 0*
+*Last updated: 2026-07-30 — LifeOS Phase * Full Complete (14 milestones, 35+ files, all gates green)*

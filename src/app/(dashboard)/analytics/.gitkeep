@@ -1,0 +1,2 @@
+# Analytics route — data dashboards, charts, insights.
+# Routing only. All logic in src/modules/analytics/.

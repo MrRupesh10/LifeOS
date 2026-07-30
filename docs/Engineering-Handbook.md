@@ -194,6 +194,24 @@ src/
 └── styles/              — Global CSS or Tailwind config
 ```
 
+### Special Patterns in Use
+
+#### `src/config/site.ts` — Site Config Object
+
+Single source of truth for all branding: name, description, URL, author,
+keywords, links. Imported by every layout, page, error boundary, and 404.
+
+```typescript
+import { siteConfig } from "@/config/site";
+// use: siteConfig.name, siteConfig.description, siteConfig.links.github
+```
+
+#### `src/providers/index.tsx` — Composition Root
+
+AppProviders wraps ThemeProvider with slots for QueryClient, Auth, Sonner.
+Layout.tsx wraps `<AppProviders>` — adding a new provider is one line here
+and zero changes to layout.tsx.
+
 ### Antipatterns — Where NOT to Put Things
 
 | Antipattern | Why It's Bad | Where Instead |
@@ -560,4 +578,19 @@ When AI generates API code, it must:
 
 ---
 
-*Last updated: 2026-07-29 — LifeOS Phase 0*
+---
+
+## Changelog
+
+### 2026-07-30 — Phase 1 Start
+- Activated Tailwind CSS v4 (CSS-based `@theme inline` config, no `tailwind.config.ts`)
+- Activated ESLint 9 flat config (`@next/eslint-plugin-next` + `@eslint/js`, no `eslint-config-next`)
+- Activated pnpm 11 with `allowBuilds` in `pnpm-workspace.yaml`
+- Full tooling rationale at `docs/engineering/tooling.md`
+
+### 2026-07-29 — Phase 0
+- Created all coding standards, naming conventions, folder structure rules
+
+---
+
+*Last updated: 2026-07-30 — LifeOS Phase 1*
