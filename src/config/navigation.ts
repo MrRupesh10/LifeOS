@@ -10,6 +10,7 @@ import {
   Briefcase,
   Receipt,
   FileUser,
+  Code2,
   BarChart3,
   Settings,
   type LucideIcon,
@@ -40,6 +41,7 @@ const ICONS: Record<string, LucideIcon> = {
   interviews: Briefcase,
   expenses: Receipt,
   resume: FileUser,
+  skills: Code2,
   analytics: BarChart3,
   settings: Settings,
 };
@@ -74,6 +76,7 @@ const primaryNav: NavGroup[] = [
         keyboardShortcut: "g i",
       },
       { title: "Resume", href: "/dashboard/resume", icon: FileUser, keyboardShortcut: "g r" },
+      { title: "Skills", href: "/dashboard/skills", icon: Code2, keyboardShortcut: "g k" },
       { title: "Expenses", href: "/dashboard/expenses", icon: Receipt, keyboardShortcut: "g e" },
     ],
   },

@@ -1,2 +1,0 @@
-# Tasks route — task list, board view, detail view.
-# Routing only. All logic in src/modules/tasks/.

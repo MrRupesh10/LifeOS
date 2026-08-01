@@ -41,19 +41,20 @@ src/
 │   │   ├── login/              # Email/password + OAuth login
 │   │   └── register/           # Account creation form
 │   ├── (dashboard)/            # Route group — authenticated app pages
-│   │   ├── dashboard/          # Home dashboard (widgets, overview)
-│   │   ├── tasks/              # Task management
-│   │   ├── habits/             # Habit tracker
-│   │   ├── journal/            # Daily journal entries
-│   │   ├── notes/              # Notes with folders/tags
-│   │   ├── projects/           # Project management
-│   │   ├── goals/              # Goal tracking
-│   │   ├── calendar/           # Calendar views
-│   │   ├── interviews/         # Interview preparation
-│   │   ├── expenses/           # Expense tracking
-│   │   ├── resume/             # Resume builder
-│   │   ├── analytics/          # Data dashboards
-│   │   └── settings/           # User preferences
+│   │   ├── layout.tsx          # Dashboard shell (AppShell wrapper)
+│   │   ├── dashboard/          # Main dashboard (widgets, overview)
+│   │   │   ├── tasks/          # Task management
+│   │   │   ├── habits/         # Habit tracker
+│   │   │   ├── journal/        # Daily journal entries
+│   │   │   ├── notes/          # Notes with folders/tags
+│   │   │   ├── projects/       # Project management
+│   │   │   ├── goals/          # Goal tracking
+│   │   │   ├── calendar/       # Calendar views
+│   │   │   ├── interviews/     # Interview preparation
+│   │   │   ├── expenses/       # Expense tracking
+│   │   │   ├── resume/         # Resume builder
+│   │   │   ├── analytics/      # Data dashboards
+│   │   │   └── settings/       # User preferences
 │   └── api/                    # Route handlers (REST endpoints, webhooks)
 │
 ├── modules/                    # Feature modules — isolated, independent

@@ -41,6 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1">
         <Sidebar />
         <main
+          id="main-content"
           className={cn(
             "flex-1 px-6 py-6 transition-[padding-left] duration-200 ease-out",
             collapsedMargin,

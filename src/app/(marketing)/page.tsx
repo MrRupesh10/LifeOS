@@ -1,26 +1,32 @@
-import { siteConfig } from "@/config/site";
-import { Button } from "@/components/ui/button";
+import type { ReactElement } from "react";
+import { Hero } from "@/components/landing/hero";
+import { FeaturesSection } from "@/components/landing/features-section";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { PreviewSection } from "@/components/landing/preview-section";
+import { Testimonials } from "@/components/landing/testimonials";
+import { RoadmapSection } from "@/components/landing/roadmap-section";
+import { CtaSection } from "@/components/landing/cta-section";
+import { SiteFooter } from "@/components/landing/site-footer";
 
 /**
- * Landing page — the root URL (/).
+ * Landing page — the public entry point at /.
  *
- * Lives in the (marketing) route group, which has a minimal
- * layout (no sidebar, no app chrome). This is the public-facing
- * entry point before authentication.
- *
- * Phase 1: Static placeholder. Later phases: feature overview,
- * sign-in CTA, testimonials, etc.
+ * Lives in the (marketing) route group (no app chrome). Order follows
+ * the Apple × Linear narrative: hook (hero) → breadth (features) →
+ * method (how it works) → proof (preview + testimonials) → trust
+ * (roadmap) → action (CTA) → footer. No authentication in this phase.
  */
-export default function HomePage() {
+export default function HomePage(): ReactElement {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-bold tracking-tight">{siteConfig.name}</h1>
-      <p className="text-muted-foreground mt-4 text-lg">{siteConfig.tagline}</p>
-      <p className="text-muted-foreground mt-2 text-sm">Phase 1 — Foundation</p>
-      <div className="mt-8 flex gap-3">
-        <Button>Get Started</Button>
-        <Button variant="outline">Learn More</Button>
-      </div>
+    <main>
+      <Hero />
+      <FeaturesSection />
+      <HowItWorks />
+      <PreviewSection />
+      <Testimonials />
+      <RoadmapSection />
+      <CtaSection />
+      <SiteFooter />
     </main>
   );
 }

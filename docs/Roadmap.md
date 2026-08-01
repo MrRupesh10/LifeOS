@@ -116,6 +116,7 @@ Build the shared UI layer: design tokens, primitives, and layout shell.
 
 ## Phase 3 — Authentication
 
+
 ### Purpose
 Implement full authentication: register, login, logout, sessions, route protection.
 

@@ -189,6 +189,31 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 
 ---
 
+## Phase 2 — Design System & Layout Shell (Complete)
+
+- **Apple/Linear-inspired design tokens** in `globals.css` — cool-blue neutral undertones, Apple blue accent (#007AFF), oklch color space, CSS custom properties for animation durations/easing, `prefers-reduced-motion` support
+- **Design token registry** at `src/config/design-tokens.ts` — typed definitions for colors, typography, spacing, radii, shadows, animations, and fonts; consumed by the design-system showcase page
+- **Dynamic `<Breadcrumb>`** at `src/components/layout/breadcrumb.tsx` — reads pathname, hides dashboard segment, shows home icon + trail with chevrons, `aria-current="page"`, integrated into Header
+- **Reusable `<Container>`** at `src/components/layout/container.tsx` — three width variants (narrow/default/wide), centered with responsive padding, polymorphic `as` prop
+- **Design System Showcase** at `/design-system` — standalone page rendering all tokens: color swatches (light+dark hex), typography scale, spacing bars, radius shapes, fonts, animation specs, all button variants × sizes, sample Dialog, sample DropdownMenu, icon grid, theme toggle
+- **Accessibility improvements**: skip-to-content link in root layout (keyboard-first), visible focus ring on `:focus-visible` (Apple blue, WCAG AAA), `aria-label` on breadcrumb, `aria-current`, reduced-motion global rule
+- **4 build routes** — `/`, `/dashboard`, `/_not-found`, `/design-system`
+- **All gates green** — typecheck ✅, lint ✅, build ✅
+
+## Phase 2 Extension — Landing Page, Dashboard & Module Pages (Complete)
+
+- **Premium landing page** at `/` — 8 narrative sections (Hero → Features → How It Works → Preview → Testimonials → Roadmap → CTA → Footer). Hero uses framer-motion floating glows + dot-grid mask. All sections wrapped in `<FadeIn>` (respect `prefers-reduced-motion`).
+- **Shared UI component library** in `src/components/shared/` — `<Card>` (3 variants: default/hover/glass), `<EmptyState>`, `<ProgressBar>`, `<SearchInput>`, `<StatsCard>`, `<SectionHeader>`, `<FilterDropdown>`, `<FadeIn>` (framer-motion wrapper, `useReducedMotion`).
+- **Rich dashboard** at `/dashboard` — welcome header, 4 StatsCards, Today's Tasks (priority dots + checkboxes), Active Projects (progress bars), Habit Streaks, Upcoming, Quick Notes, Recent Activity timeline, This Month balance. All data from `src/lib/mock-data.ts`.
+- **13 module page shells** in `src/app/(dashboard)/` — tasks, habits, journal, notes, projects, goals, skills, calendar, expenses, interviews, resume, settings, analytics. Each: SectionHeader + 4-col StatsCard row + Card with recent items + EmptyState.
+- **Mock data** centralized at `src/lib/mock-data.ts` — server-safe (no `new Date()` calls, all ISO strings). Single source for all demo content across landing + dashboard + module pages.
+- **Date utility** at `src/lib/format-date.ts` — `formatShortDate`, `formatShortDateTime`, `splitDate`. Deterministic ISO string parsing (no `new Date()`) — prevents hydration mismatches. Strict null-safe via `parseIsoDate` guard.
+- **Skills** added to navigation (`src/config/navigation.ts`) — `Code2` icon, "g k" shortcut, in Career group.
+- **framer-motion v12** installed — used only in `<FadeIn>` and Hero for intentional motion. `useReducedMotion` accessibility hook respected everywhere.
+- **`GithubIcon`** SVG component at `src/components/landing/github-icon.tsx` — lucide-react removed brand icons, so the GitHub mark is an inline SVG inheriting `currentColor`.
+- **17 build routes**, **all 15 dashboard routes return HTTP 200** (dev server verified).
+- **All gates green** — typecheck ✅, lint ✅, build ✅ (17 routes).
+
 ## Phase 1 — Active Tooling Decisions
 
 - **Tailwind CSS v4** is in use (not v3). Configuration is CSS-based via `@import "tailwindcss"` and `@theme inline` in `src/app/globals.css`. There is NO `tailwind.config.ts`. Use `postcss.config.mjs` with `@tailwindcss/postcss` plugin.
@@ -216,9 +241,9 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 - **Project status:** `docs/PROJECT_STATUS.md` — live tracker (current phase, milestones, verification gates)
 - **Folder structure:** `docs/FOLDER_STRUCTURE.md` — every directory, naming rules, module boundaries
 - **Engineering handbook:** `docs/Engineering-Handbook.md` — coding standards, component patterns, error handling
-- **Changelog:** `docs/CHANGELOG.md` — Keep a Changelog format, updated through M12
-- **All gates green:** `typecheck` ✅ `lint` ✅ `format:check` ✅ `build` ✅ (3 routes: /, /dashboard, /_not-found)
+- **Changelog:** `docs/CHANGELOG.md` — Keep a Changelog format, updated through M22
+- **All gates green:** `typecheck` ✅ `lint` ✅ `format:check` ✅ `build` ✅ (17 routes)
 
 ---
 
-*Last updated: 2026-07-30 — LifeOS Phase 1 Complete*
+*Last updated: 2026-08-01 — LifeOS Phase 2 Complete*

@@ -166,21 +166,21 @@ app/
 │   ├── forgot-password/page.tsx  # Password reset request
 │   └── reset-password/page.tsx   # Reset password with token
 │
-├── (dashboard)/                  # Authenticated route group
-│   ├── layout.tsx                # Dashboard layout (sidebar + header)
-│   ├── dashboard/page.tsx        # Main dashboard
-│   ├── tasks/page.tsx            # Task list
-│   ├── habits/page.tsx           # Habit tracker
-│   ├── journal/page.tsx          # Daily journal
-│   ├── notes/page.tsx            # Notes
-│   ├── projects/page.tsx         # Project manager
-│   ├── goals/page.tsx            # Goal tracker
-│   ├── calendar/page.tsx         # Calendar view
-│   ├── interviews/page.tsx       # Interview tracker
-│   ├── expenses/page.tsx         # Expense tracking
-│   ├── resume/page.tsx           # Resume manager
-│   ├── analytics/page.tsx        # Analytics dashboard
-│   └── settings/page.tsx         # User settings
+├── (dashboard)/                      # Authenticated route group
+│   ├── layout.tsx                    # Dashboard layout (sidebar + header)
+│   ├── dashboard/page.tsx            # Main dashboard
+│   │   ├── tasks/page.tsx            # Task list
+│   │   ├── habits/page.tsx           # Habit tracker
+│   │   ├── journal/page.tsx          # Daily journal
+│   │   ├── notes/page.tsx            # Notes
+│   │   ├── projects/page.tsx         # Project manager
+│   │   ├── goals/page.tsx            # Goal tracker
+│   │   ├── calendar/page.tsx         # Calendar view
+│   │   ├── interviews/page.tsx       # Interview tracker
+│   │   ├── expenses/page.tsx         # Expense tracking
+│   │   ├── resume/page.tsx           # Resume manager
+│   │   ├── analytics/page.tsx        # Analytics dashboard
+│   │   └── settings/page.tsx         # User settings
 │
 └── api/                          # Route handlers for external APIs
     ├── webhooks/                 # External webhook endpoints

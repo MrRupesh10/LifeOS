@@ -9,11 +9,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Current Version** | `0.1.0-alpha` |
-| **Current Phase** | Phase 1 — Project Foundation ✅ Complete |
-| **Current Sprint** | Sprint 1 — Foundation |
-| **Sprint Start** | 2026-07-30 |
-| **Last Updated** | 2026-07-30 |
+| **Current Version** | `0.2.1-alpha` |
+| **Current Phase** | Phase 2 — Design System & Layout Shell ✅ Complete |
+| **Current Sprint** | Sprint 2 — Landing Page, Dashboard & Module Pages |
+| **Sprint Start** | 2026-08-01 |
+| **Last Updated** | 2026-08-01 |
 
 ---
 
@@ -23,7 +23,7 @@
 |-------|------|--------|
 | Phase 0 | Documentation | ✅ Complete |
 | Phase 1 | Project Setup | ✅ Complete |
-| Phase 2 | Design System & Layout Shell | 🔜 Upcoming |
+| Phase 2 | Design System & Layout Shell | ✅ Complete |
 | Phase 3 | Authentication | 🔜 Upcoming |
 | Phase 4 | Database Foundation | 🔜 Upcoming |
 | Phase 5 | Dashboard | 🔜 Upcoming |
@@ -62,14 +62,32 @@
 
 ---
 
-## Phase 1 Verification (2026-07-30)
+## Phase 2 Verification (2026-08-01)
 
 | Gate | Command | Result |
 |------|---------|--------|
-| Format | `pnpm format:check` | ✅ All files use Prettier style |
+| Format | `pnpm format:check` | ✅ All files pass |
 | TypeScript | `pnpm typecheck` | ✅ Zero errors |
 | ESLint | `pnpm lint` | ✅ Zero warnings |
-| Build | `pnpm build` | ✅ 3 routes generated (/, /_not-found, /dashboard) |
+| Build | `pnpm build` | ✅ 17 routes generated |
+| Runtime | Dev server HTTP 200 | ✅ All 15 dashboard routes verified |
+
+---
+
+## Completed Milestones — Phase 2
+
+| Milestone | Name | Status | What Shipped |
+|-----------|------|--------|-------------|
+| M13 | Apple/Linear design tokens | ✅ | Cool-toned oklch palette, animation tokens, prefers-reduced-motion, improved focus ring, design token registry |
+| M14 | Breadcrumb + Container | ✅ | Dynamic Breadcrumb in Header, reusable Container (3 widths, polymorphic as) |
+| M15 | Design system showcase | ✅ | /design-system route — colors, typography, spacing, buttons, dialog, dropdown, icons |
+| M16 | Accessibility pass | ✅ | Skip-to-content link, id="main-content", aria-labels, keyboard nav |
+| M17 | Verify & document | ✅ | All 4 gates green, CHANGELOG v0.2.0, CLAUDE.md updated |
+| M18 | Shared UI component library | ✅ | Card (3 variants), EmptyState, ProgressBar, SearchInput, StatsCard, SectionHeader, FilterDropdown, FadeIn (framer-motion), format-date utility |
+| M19 | 13 module page shells | ✅ | Pages for tasks/habits/journal/notes/projects/goals/skills/calendar/expenses/interviews/resume/settings/analytics — all with SectionHeader + StatsCard row + Card lists |
+| M20 | Rich dashboard rewrite | ✅ | Welcome header, 4 StatsCards, Today's Tasks, Active Projects, Habit Streaks, Upcoming, Quick Notes, Recent Activity, This Month balance |
+| M21 | Premium landing page | ✅ | 8 sections: Hero (framer-motion glows), Features (11 cards), How It Works, Preview (mockup), Testimonials (glass cards), Roadmap (timeline), CTA, Footer |
+| M22 | Verification & polish | ✅ | 17 routes, all gates green, all 15 dashboard routes return 200, glass cards on testimonials |
 
 ---
 
@@ -122,8 +140,10 @@
 ## Notes
 
 - 2026-07-30: **Phase 1 complete.** 14 milestones, 30 packages, 3 routes, 14 ADRs, 15 docs, all gates green.
-- Next: User approval → Phase 2 (Design System Foundations).
+- 2026-07-31: **Phase 2 complete.** Design tokens, Breadcrumb, Container, design-system showcase, accessibility pass — 5 milestones, 4 routes.
+- 2026-08-01: **Phase 2 extension complete.** Premium landing page (8 sections), rich dashboard, 13 module page shells, shared UI component library (8 components), framer-motion animations — 5 milestones, 17 routes, all gates green. All 15 dashboard routes verified via dev server (HTTP 200).
+- Next: User approval → Phase 3 (Authentication).
 
 ---
 
-*Last updated: 2026-07-30 — LifeOS Phase 1 Complete*
+*Last updated: 2026-08-01 — LifeOS Phase 2 Complete*

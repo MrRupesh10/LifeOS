@@ -7,6 +7,107 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ---
 
+## [0.2.0-alpha] — 2026-07-31
+
+### Phase 2 Complete — Design System & Layout Shell
+
+**5 milestones. Apple/Linear-inspired visual language. Design system showcase.**
+
+#### M13 — Design Tokens (Apple/Linear-inspired)
+- Updated `globals.css` with cool-toned oklch color palette
+- Apple blue accent (#007AFF / #0A84FF), blue-gray undertones
+- iPhone-inspired dark mode with perceptual depth
+- Animation duration/easing CSS custom properties
+- `prefers-reduced-motion` global support
+- Improved :focus-visible ring (Apple blue, WCAG AAA contrast)
+- Custom scrollbar styling, ::selection color
+- `src/config/design-tokens.ts` — typed token registry (colors, typography, spacing, radii, shadows, animations, fonts)
+
+#### M14 — Breadcrumb + Container Components
+- Dynamic `<Breadcrumb>` — reads pathname, hides dashboard segment, home icon + chevrons, `aria-current="page"`
+- Reusable `<Container>` — three width variants (narrow/default/wide), centered, responsive padding, polymorphic `as` prop
+- Breadcrumb integrated into Header (replaces static text)
+
+#### M15 — Design System Showcase Page
+- New route: `/design-system` — standalone page outside dashboard chrome
+- All color swatches with light/dark hex values
+- Typography scale rendered as samples
+- Spacing scale visual bars
+- Border radius, fonts, animation token tables
+- Complete button matrix: 5 variants × 4 sizes + icon sizes
+- Interactive Dialog demo
+- Interactive DropdownMenu demo
+- Icon grid (8 icons, Lucide)
+- Theme toggle in page header for real-time light/dark testing
+- Section wrapper component for consistent vertical rhythm
+
+#### M16 — Accessibility Improvements
+- Skip-to-content link in root layout (first focusable element)
+- `id="main-content"` anchor in AppShell main
+- All interactive components keyboard-accessible
+- `aria-label="Breadcrumb"` and `aria-current="page"`
+- Focus-visible ring on all keyboard-focusable elements
+
+---
+
+## [0.2.1-alpha] — 2026-08-01
+
+### Phase 2 Extension — Landing Page, Dashboard, Module Pages
+
+**5 milestones. Premium marketing site, full dashboard, all 17 routes functional.**
+
+#### M18 — Shared UI Component Library
+- `<Card>` — 3 variants (default, hover, glass)
+- `<EmptyState>` — icon + title + description + optional action
+- `<ProgressBar>` — animated, color variants, accessible
+- `<SearchInput>` — icon, clear button, animation
+- `<StatsCard>` — icon, value, label, trend indicator
+- `<SectionHeader>` — title, description, CTA button row
+- `<FilterDropdown>` — trigger button + popover menu
+- `<FadeIn>` — framer-motion wrapper, reduce-motion respect, viewport once
+- New utility: `src/lib/format-date.ts` — server-safe ISO parsing with strict guards
+
+#### M18 — 13 Module Page Shells
+- All pages: tasks, habits, journal, notes, projects, goals, skills, calendar, expenses, interviews, resume, settings, analytics
+- Each page: SectionHeader + 4-col StatsCard row + Card with recent items + EmptyState for empty states
+- Localized icon imports, zero unused icons, strict TypeScript compliant
+
+#### M19 — Rich Dashboard (Rewrite)
+- Welcome header with time-of-day greeting + analytics link
+- 4 StatsCards: tasks completed, habit streak, active projects, skills improved
+- "Today's Tasks" — priority dots + status checkboxes + due dates
+- "Active Projects" — progress bars with stage labels
+- "Habit Streaks" — streak count cards with status indicators
+- "Upcoming" — 3 closest items with color-coded badges
+- "Quick Notes" — shortcut cards to Journal/Notes/Calendar
+- "Recent Activity" — timeline with icon-coded entries
+- "This Month" — visual spending balance card
+
+#### M19 — Premium Landing Page (8 Sections)
+- **Hero** — animated floating glows, dot grid mask, gradient headline, version badge, Hubble-style CTAs (Button render prop)
+- **Features Section** — 11 feature cards mapped to modules grid, FadeIn on scroll, "Open" links
+- **How It Works** — 3-step timeline: Capture → Organize → The Grow; connecting horizontal line
+- **Preview Section** — fake dashboard window with 3 dots window chrome, skill bars, weekly chart, "Explore the live dashboard" link
+- **Testimonials** — 3 MOCK_TESTIMONIALS: glass-morphism Card entries, rounded avatars
+- **Roadmap** — timeline with left rail, phased entries, status chips
+- **CTA Section** — gradient container, CTA to launch dashboard
+- **Site Footer** — GitHub (GitHubIcon SVG for lucide removal), Design System, Dashboard links; "Built with Next.js + Heart"
+
+#### M20 — Infrastructure & Fixes
+- `GithubIcon` SVG component (replaced `Github` from lucide-react — brand icons removed)
+- `format-short-date` with deterministic ISO parsing (no `new Date()` — prevents hydration drift)
+- All `Button` imports use `@/components/ui/button` (not shadcn legacy path)
+- 13 module pages — all lucide-icon imports fixed
+
+#### M21 — Verification & Documentation
+- `pnpm typecheck` ✅ Zero errors
+- `pnpm lint` ✅ Zero warnings
+- `pnpm build` ✅ 17 routes (all 200 HTTP responses)
+- All 15 dashboard routes verified via dev server
+- Updated README.md, CHANGELOG.md, PROJECT_STATUS.md, CLAUDE.md
+
+---
+
 ## [0.1.0-alpha] — 2026-07-30
 
 ### Phase 1 Complete — Project Foundation

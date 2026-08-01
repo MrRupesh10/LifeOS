@@ -3,17 +3,14 @@
 import { PanelLeft, Search } from "lucide-react";
 import { useSidebarStore } from "@/stores/ui/sidebar-store";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { CommandPalette } from "@/components/shared/command-palette";
 
 /**
  * Application header — top bar shown on every dashboard page.
  *
- * Left: hamburger button (mobile) ── opens mobile sidebar drawer
- * Center: breadcrumb / page title (filled in later)
+ * Left: hamburger button (mobile) + dynamic Breadcrumb
  * Right: command palette trigger, theme toggle
- *
- * All interactive: hamburger modifies Zustand sidebar store,
- * search triggers CommandPalette, theme opens dropdown.
  */
 
 export function Header() {
@@ -24,7 +21,7 @@ export function Header() {
       <CommandPalette />
 
       <header className="bg-background sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b px-4">
-        {/* Left: hamburger (mobile) + sidebar toggle (desktop) */}
+        {/* Left: hamburger (mobile) + breadcrumb navigation */}
         <div className="flex items-center gap-2">
           <button
             className="hover:bg-accent rounded-md p-1.5 lg:hidden"
@@ -36,8 +33,7 @@ export function Header() {
             <PanelLeft className="h-5 w-5" />
           </button>
 
-          {/* Breadcrumb placeholder */}
-          <span className="text-muted-foreground hidden text-sm sm:block">/dashboard</span>
+          <Breadcrumb className="hidden sm:flex" />
         </div>
 
         {/* Right: actions */}

@@ -78,6 +78,10 @@ Open [http://localhost:3000](http://localhost:3000).
 | `pnpm format:check` | Check formatting |
 | `pnpm typecheck` | TypeScript type checking |
 
+### Design System
+
+Visit `/design-system` to view the complete visual reference — colors, typography, spacing, shadows, buttons, dialogs, dropdowns, and icons — in both light and dark themes.
+
 ### All Gates Passed
 
 ```
@@ -155,7 +159,7 @@ All navigation lives in `src/config/navigation.ts` — the single source of trut
 
 ## Current Status
 
-**Phase 1 complete — project foundation shipped.**
+**Phase 2 complete — Design System & Layout Shell shipped.**
 
 | Milestone | Name | Status |
 |-----------|------|--------|
@@ -171,8 +175,13 @@ All navigation lives in `src/config/navigation.ts` — the single source of trut
 | M10 | Providers setup | ✅ |
 | M11 | Wire everything in root layout | ✅ |
 | M12 | Verify and test | ✅ All 4 gates green |
+| **M13** | **Apple/Linear design tokens** | ✅ |
+| **M14** | **Breadcrumb + Container components** | ✅ |
+| **M15** | **Design system showcase page** | ✅ |
+| **M16** | **Accessibility pass (skip-link, focus)** | ✅ |
+| **M17** | **Verify & document** | ✅ |
 
-**3 routes in production build:** `/` (landing), `/dashboard` (app shell), `/_not-found` (404)
+**4 routes in production build:** `/`, `/dashboard`, `/_not-found`, `/design-system`
 
 ---
 

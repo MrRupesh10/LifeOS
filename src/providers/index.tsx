@@ -1,5 +1,6 @@
 "use client";
 
+import { MotionConfig } from "framer-motion";
 import { ThemeProvider } from "@/providers/theme";
 import { QueryProvider } from "@/providers/query";
 import { Toaster } from "sonner";
@@ -12,18 +13,21 @@ import { Toaster } from "sonner";
  * added it occupies one line here and zero lines in layout.
  *
  * Provider order (top → down, outer → inner):
- *  1. ThemeProvider     —  light/dark mode persistence
- *  2. QueryProvider     —  TanStack Query client
- *  3. (future) AuthProvider   — Better Auth context
- *  4. (future) Sonner.toaster    — App-level toast notifications
+ *  1. MotionConfig       —  respects prefers-reduced-motion (no tree branching)
+ *  2. ThemeProvider      —  light/dark mode persistence
+ *  3. QueryProvider      —  TanStack Query client
+ *  4. (future) AuthProvider   — Better Auth context
+ *  5. (future) Sonner.toaster — App-level toast notifications
  */
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider>
-      <QueryProvider>
-        {children}
-        <Toaster position="bottom-right" closeButton richColors theme="system" />
-      </QueryProvider>
-    </ThemeProvider>
+    <MotionConfig reducedMotion="user">
+      <ThemeProvider>
+        <QueryProvider>
+          {children}
+          <Toaster position="bottom-right" closeButton richColors theme="system" />
+        </QueryProvider>
+      </ThemeProvider>
+    </MotionConfig>
   );
 }
