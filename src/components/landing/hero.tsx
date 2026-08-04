@@ -68,12 +68,13 @@ export function Hero(): ReactElement {
 
           {/* CTAs */}
           <div className="flex flex-col items-center gap-3 sm:flex-row">
-            <Button size="lg" render={<Link href="/dashboard" />}>
+            <Button size="lg" nativeButton={false} render={<Link href="/dashboard" />}>
               Get Started <ArrowRight className="size-4" />
             </Button>
             <Button
               variant="outline"
               size="lg"
+              nativeButton={false}
               render={<a href={siteConfig.links.github} target="_blank" rel="noreferrer" />}
             >
               <GithubIcon className="size-4" /> Star on GitHub

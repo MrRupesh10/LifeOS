@@ -189,6 +189,41 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 
 ---
 
+- **Version:** 0.3.0-alpha
+- **Current Phase:** Phase 3 and  4 — Database Foundation
+- **Completed Phases:** Phase 0, Phase 1, Phase 2, Phase 3, Phase 4
+- **Project Status:** Phase 5 (Dashboard) is the next planned milestone.
+
+## Current Implementation State
+
+## Phase 0 — Documentation & Reference
+
+- **Dependency manifest:** `docs/DEPENDENCIES.md` — every package, justification, and alternatives considered (30 packages)
+- **Architectural decisions:** `.claude/DECISIONS.md` — 14 ADRs covering every technology choice from Next.js 15 to TanStack Query factory pattern
+- **Project status:** `docs/PROJECT_STATUS.md` — live tracker (current phase, milestones, verification gates)
+- **Folder structure:** `docs/FOLDER_STRUCTURE.md` — every directory, naming rules, module boundaries
+- **Engineering handbook:** `docs/Engineering-Handbook.md` — coding standards, component patterns, error handling
+- **Changelog:** `docs/CHANGELOG.md` — Keep a Changelog format, updated through M22
+- **All gates green:** `typecheck` ✅ `lint` ✅ `format:check` ✅ `build` ✅ (17 routes)
+
+## Phase 1 — Active Tooling Decisions
+
+- **Tailwind CSS v4** is in use (not v3). Configuration is CSS-based via `@import "tailwindcss"` and `@theme inline` in `src/app/globals.css`. There is NO `tailwind.config.ts`. Use `postcss.config.mjs` with `@tailwindcss/postcss` plugin.
+- **ESLint 9** flat config via `eslint.config.mjs` using `@next/eslint-plugin-next` (`flatConfig.recommended` + `flatConfig.coreWebVitals`) and `@eslint/js`. Do NOT use `eslint-config-next` (the legacy package) — it breaks with ESLint 9.
+- **pnpm `allowBuilds`** is in `pnpm-workspace.yaml` for `sharp` and `unrs-resolver`.
+- **shadcn/ui v2** uses `@base-ui/react` (not Radix). Buttons don't support `asChild` — Base UI uses the `render` prop instead. Import components from `@/components/ui/`.
+- **Site config** is centralized in `src/config/site.ts` — all branding, metadata, and links live there. Import `siteConfig` for app name, description, or GitHub URL anywhere in the app.
+- **AppProviders** in `src/providers/index.tsx` is the single composition root. Layout.tsx wraps `<AppProviders>` once — adding future providers (QueryClient, Sonner, Auth) requires zero layout changes.
+- **Route groups** `(marketing)` (public pages, no chrome) and `(dashboard)` (AppShell with sidebar, header, footer). Dashboard layout lives at `src/app/(dashboard)/layout.tsx`.
+- **AppShell** is now a client component powered by a **Zustand sidebar store** — `src/stores/ui/sidebar-store.ts` (ADR-009). No provider required; components subscribe directly.
+- **Sidebar** reads navigation items from `src/config/navigation.ts` — the single source of truth for all nav links and icons. Add a module = one insert in navigation.ts, zero changes to sidebar.
+- **Active navigation highlighting** uses `usePathname()` from `next/navigation` — `pathname.startsWith(href)` pattern.
+- **Theme toggle** uses a shadcn DropdownMenu (not a button cycle) — three radio options: Light → Dark → System.
+- **Command palette** placeholder listens globally for ⌘K / Ctrl+K and opens a Base UI Dialog. Hook: `src/components/shared/command-palette.tsx`.
+- **TanStack Query** is wired via `src/providers/query.tsx` — server-safe QueryClient factory pattern (prevents cross-session data leaks). Full `@tanstack/react-query` provider ready inside AppProviders.
+- **Sonner** `<Toaster />` is mounted globally inside AppProviders at bottom-right position, richColors, theme-aware.
+- **shadcn/ui dropdown-menu and dialog** installed — the dropdown uses Base UI's Menu primitive. Trigger is styled with className; no `asChild` needed.
+
 ## Phase 2 — Design System & Layout Shell (Complete)
 
 - **Apple/Linear-inspired design tokens** in `globals.css` — cool-blue neutral undertones, Apple blue accent (#007AFF), oklch color space, CSS custom properties for animation durations/easing, `prefers-reduced-motion` support
@@ -214,36 +249,12 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 - **17 build routes**, **all 15 dashboard routes return HTTP 200** (dev server verified).
 - **All gates green** — typecheck ✅, lint ✅, build ✅ (17 routes).
 
-## Phase 1 — Active Tooling Decisions
-
-- **Tailwind CSS v4** is in use (not v3). Configuration is CSS-based via `@import "tailwindcss"` and `@theme inline` in `src/app/globals.css`. There is NO `tailwind.config.ts`. Use `postcss.config.mjs` with `@tailwindcss/postcss` plugin.
-- **ESLint 9** flat config via `eslint.config.mjs` using `@next/eslint-plugin-next` (`flatConfig.recommended` + `flatConfig.coreWebVitals`) and `@eslint/js`. Do NOT use `eslint-config-next` (the legacy package) — it breaks with ESLint 9.
-- **pnpm `allowBuilds`** is in `pnpm-workspace.yaml` for `sharp` and `unrs-resolver`.
-- **shadcn/ui v2** uses `@base-ui/react` (not Radix). Buttons don't support `asChild` — Base UI uses the `render` prop instead. Import components from `@/components/ui/`.
-- **Site config** is centralized in `src/config/site.ts` — all branding, metadata, and links live there. Import `siteConfig` for app name, description, or GitHub URL anywhere in the app.
-- **AppProviders** in `src/providers/index.tsx` is the single composition root. Layout.tsx wraps `<AppProviders>` once — adding future providers (QueryClient, Sonner, Auth) requires zero layout changes.
-- **Route groups** `(marketing)` (public pages, no chrome) and `(dashboard)` (AppShell with sidebar, header, footer). Dashboard layout lives at `src/app/(dashboard)/layout.tsx`.
-- **AppShell** is now a client component powered by a **Zustand sidebar store** — `src/stores/ui/sidebar-store.ts` (ADR-009). No provider required; components subscribe directly.
-- **Sidebar** reads navigation items from `src/config/navigation.ts` — the single source of truth for all nav links and icons. Add a module = one insert in navigation.ts, zero changes to sidebar.
-- **Active navigation highlighting** uses `usePathname()` from `next/navigation` — `pathname.startsWith(href)` pattern.
-- **Theme toggle** uses a shadcn DropdownMenu (not a button cycle) — three radio options: Light → Dark → System.
-- **Command palette** placeholder listens globally for ⌘K / Ctrl+K and opens a Base UI Dialog. Hook: `src/components/shared/command-palette.tsx`.
-- **TanStack Query** is wired via `src/providers/query.tsx` — server-safe QueryClient factory pattern (prevents cross-session data leaks). Full `@tanstack/react-query` provider ready inside AppProviders.
-- **Sonner** `<Toaster />` is mounted globally inside AppProviders at bottom-right position, richColors, theme-aware.
-- **shadcn/ui dropdown-menu and dialog** installed — the dropdown uses Base UI's Menu primitive. Trigger is styled with className; no `asChild` needed.
-
 ---
 
-## Phase 1 — Documentation & Reference
+## Phase 3 (Authentication) and 4 (Database Foundation) are fully implemented, verified, and production‑ready.
 
-- **Dependency manifest:** `docs/DEPENDENCIES.md` — every package, justification, and alternatives considered (30 packages)
-- **Architectural decisions:** `.claude/DECISIONS.md` — 14 ADRs covering every technology choice from Next.js 15 to TanStack Query factory pattern
-- **Project status:** `docs/PROJECT_STATUS.md` — live tracker (current phase, milestones, verification gates)
-- **Folder structure:** `docs/FOLDER_STRUCTURE.md` — every directory, naming rules, module boundaries
-- **Engineering handbook:** `docs/Engineering-Handbook.md` — coding standards, component patterns, error handling
-- **Changelog:** `docs/CHANGELOG.md` — Keep a Changelog format, updated through M22
-- **All gates green:** `typecheck` ✅ `lint` ✅ `format:check` ✅ `build` ✅ (17 routes)
-
+- **All verification gates:** TypeScript ✅, ESLint ✅, Prettier ✅, Build ✅, Auth flow ✅, DB access ✅, Security ✅.
+- **Documentation:** PROJECT_STATUS, CHANGELOG, and README updated to reflect the new release.
 ---
 
-*Last updated: 2026-08-01 — LifeOS Phase 2 Complete*
+*Last updated: 2026-08-03 — LifeOS Phase 4 Complete*

@@ -41,8 +41,8 @@ LifeOS fixes that. It's **one app, one experience, one data model**, where every
 | **Fonts** | Geist Sans + Geist Mono | `next/font/google` with CSS variables |
 | **Icons** | Lucide React | 1,200+ icons, tree-shaken |
 | **Theme** | next-themes | Class strategy, system-default, flash-free |
-| **Auth** | Better Auth (Phase 3) | Placeholder only — not wired yet |
-| **Database** | PostgreSQL + Drizzle ORM (Phase 4) | Placeholder only — not wired yet |
+| **Auth** | Better Auth (Phase 3) | ✅ Complete |
+| **Database** | PostgreSQL + Drizzle ORM (Phase 4) | ✅ Complete |
 | **Validation** | Zod 4 | Shared client + server schemas |
 | **State** | Zustand (sidebar), TanStack Query (server cache) | ADR-009, ADR-014 |
 | **Notifications** | Sonner | Global `<Toaster>` mounted |

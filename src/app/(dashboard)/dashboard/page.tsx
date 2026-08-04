@@ -97,7 +97,12 @@ export default function DashboardPage(): React.ReactElement {
             Here's what's happening across your life today.
           </p>
         </div>
-        <Button variant="outline" size="sm" render={<Link href="/dashboard/analytics" />}>
+        <Button
+          variant="outline"
+          size="sm"
+          nativeButton={false}
+          render={<Link href="/dashboard/analytics" />}
+        >
           View Analytics
         </Button>
       </div>

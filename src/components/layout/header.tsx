@@ -3,8 +3,10 @@
 import { PanelLeft, Search } from "lucide-react";
 import { useSidebarStore } from "@/stores/ui/sidebar-store";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { siteConfig } from "@/config/site";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { CommandPalette } from "@/components/shared/command-palette";
+import { UserMenu } from "@/components/layout/user-menu";
 
 /**
  * Application header — top bar shown on every dashboard page.
@@ -14,6 +16,9 @@ import { CommandPalette } from "@/components/shared/command-palette";
  */
 
 export function Header() {
+  // Header now displays the application name next to the breadcrumb for better branding visibility when the sidebar toggles.
+  // The name is imported from the site config and truncated to avoid overflow.
+
   const { isMobileOpen, openMobile } = useSidebarStore();
 
   return (
@@ -33,7 +38,11 @@ export function Header() {
             <PanelLeft className="h-5 w-5" />
           </button>
 
-          <Breadcrumb className="hidden sm:flex" />
+          {/* App name – placed before breadcrumb so it gets priority space */}
+          <span className="text-foreground hidden max-w-[12rem] truncate font-medium md:inline-block">
+            {siteConfig.name}
+          </span>
+          <Breadcrumb className="hidden flex-1 sm:flex" />
         </div>
 
         {/* Right: actions */}
@@ -53,6 +62,9 @@ export function Header() {
 
           {/* Theme toggle */}
           <ThemeToggle />
+
+          {/* Account / sign-out */}
+          <UserMenu />
         </div>
       </header>
     </>

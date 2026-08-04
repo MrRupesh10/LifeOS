@@ -20,7 +20,7 @@ export function CtaSection(): ReactElement {
                 Everything you track, in one calm place. No setup, no friction — just open and go.
               </p>
               <div className="mt-8 flex justify-center">
-                <Button size="lg" render={<Link href="/dashboard" />}>
+                <Button size="lg" nativeButton={false} render={<Link href="/dashboard" />}>
                   Open Dashboard <ArrowRight className="size-4" />
                 </Button>
               </div>

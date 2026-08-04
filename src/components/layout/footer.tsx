@@ -1,4 +1,7 @@
+"use client";
+
 import { siteConfig } from "@/config/site";
+import React from "react";
 
 /**
  * Application footer — shown at the bottom of every dashboard page.
@@ -7,7 +10,12 @@ import { siteConfig } from "@/config/site";
  * Future: status bar (online/offline, last sync, build version).
  */
 export function Footer() {
-  const year = new Date().getFullYear();
+  const [year, setYear] = React.useState<number>(new Date().getFullYear());
+
+  React.useEffect(() => {
+    // Ensure the year matches the client time on hydration
+    setYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className="bg-background border-t px-6 py-3 text-center text-xs">

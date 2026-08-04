@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/types";
@@ -46,20 +47,22 @@ export function ThemeToggle() {
         <ThemeIcon mode={current} className="h-[1.2rem] w-[1.2rem] transition-all" />
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end">
-        {THEME_OPTIONS.map((opt) => {
-          const isSelected = current === opt.value;
-          return (
-            <DropdownMenuItem
-              key={opt.value}
-              onClick={() => setTheme(opt.value)}
-              className={cn(isSelected && "font-medium")}
-            >
-              <ThemeIcon mode={opt.value} className="h-4 w-4" />
-              <span>{opt.label}</span>
-              {isSelected && <Check className="ml-auto h-4 w-4" />}
-            </DropdownMenuItem>
-          );
-        })}
+        <DropdownMenuGroup>
+          {THEME_OPTIONS.map((opt) => {
+            const isSelected = current === opt.value;
+            return (
+              <DropdownMenuItem
+                key={opt.value}
+                onClick={() => setTheme(opt.value)}
+                className={cn(isSelected && "font-medium")}
+              >
+                <ThemeIcon mode={opt.value} className="h-4 w-4" />
+                <span>{opt.label}</span>
+                {isSelected && <Check className="ml-auto h-4 w-4" />}
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

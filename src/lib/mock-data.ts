@@ -860,7 +860,7 @@ export const MOCK_ROADMAP: RoadmapPhase[] = [
   {
     phase: "Phase 3",
     title: "Authentication",
-    status: "upcoming",
+    status: "completed",
     items: [
       "Better Auth integration",
       "OAuth providers",
@@ -871,9 +871,15 @@ export const MOCK_ROADMAP: RoadmapPhase[] = [
   },
   {
     phase: "Phase 4",
-    title: "Modules Engine",
-    status: "upcoming",
-    items: ["Tasks", "Habits", "Journal", "Projects", "Goals", "Analytics"],
+    title: "Database Foundation",
+    status: "completed",
+    items: [
+      "Drizzle ORM schema & migrations",
+      "Auth tables (users, sessions, accounts)",
+      "Core domain tables",
+      "Row-level user isolation",
+      "Migration workflow & seed data",
+    ],
   },
   {
     phase: "Phase 5",

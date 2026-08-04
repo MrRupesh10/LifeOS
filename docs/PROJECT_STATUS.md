@@ -9,11 +9,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Current Version** | `0.2.1-alpha` |
-| **Current Phase** | Phase 2 — Design System & Layout Shell ✅ Complete |
+| **Current Version** | `0.3.0-alpha` |
+| **Current Phase** | Phase 4 — Database Foundation ✅ Complete |
 | **Current Sprint** | Sprint 2 — Landing Page, Dashboard & Module Pages |
 | **Sprint Start** | 2026-08-01 |
-| **Last Updated** | 2026-08-01 |
+| **Last Updated** | 2026-08-03 |
 
 ---
 
@@ -24,8 +24,8 @@
 | Phase 0 | Documentation | ✅ Complete |
 | Phase 1 | Project Setup | ✅ Complete |
 | Phase 2 | Design System & Layout Shell | ✅ Complete |
-| Phase 3 | Authentication | 🔜 Upcoming |
-| Phase 4 | Database Foundation | 🔜 Upcoming |
+| Phase 3 | Authentication | ✅ Complete |
+| Phase 4 | Database Foundation | ✅ Complete |
 | Phase 5 | Dashboard | 🔜 Upcoming |
 | Phase 6 | Task Management | 🔜 Upcoming |
 | Phase 7 | Habit Tracker | 🔜 Upcoming |
@@ -51,26 +51,14 @@
 | M2 | Dependencies installed | ✅ | 18 deps + 12 devDeps |
 | M3 | shadcn/ui v2 init | ✅ | New York base-nova, Base UI, neutral colors, Button |
 | M4 | Tooling configured | ✅ | ESLint 9 flat config, Prettier + Tailwind sort, Husky + lint-staged |
-| M5 | Environment validation | ✅ | t3-env + Zod — fail-fast env parsing |
+| M5 | Environment validation | ✅ | t3-env + Zod — fail-fast |
 | M6 | Production folder structure | ✅ | 84 directories, .gitkeep docs, FOLDER_STRUCTURE.md |
-| M7 | Core configuration | ✅ | Geist fonts, next-themes ThemeProvider, Open Graph metadata, siteConfig |
+| M7 | Core configuration | ✅ | Geist fonts, next-themes ThemeProvider, siteConfig |
 | M8 | Base page files | ✅ | loading, error, global-error, not-found, (marketing)/(dashboard) route groups |
-| M9 | Interactive layout shell | ✅ | Zustand sidebar store, dropdown theme toggle, ⌘K Command Palette, TanStack Query, Sonner |
-| M10 | Providers setup | ✅ | ThemeProvider, QueryProvider (factory), Sonner Toaster — composite AppProviders |
-| M11 | Wire everything | ✅ | Root layout: fonts → AppProviders; Dashboard layout: AppShell |
-| M12 | Verify and test | ✅ | All routes build, typecheck, lint, format — 4/4 gates green |
-
----
-
-## Phase 2 Verification (2026-08-01)
-
-| Gate | Command | Result |
-|------|---------|--------|
-| Format | `pnpm format:check` | ✅ All files pass |
-| TypeScript | `pnpm typecheck` | ✅ Zero errors |
-| ESLint | `pnpm lint` | ✅ Zero warnings |
-| Build | `pnpm build` | ✅ 17 routes generated |
-| Runtime | Dev server HTTP 200 | ✅ All 15 dashboard routes verified |
+| M9 | Interactive layout shell | ✅ | Zustand sidebar, navigation config, header, breadcrumb, theme toggle, command palette |
+| M10 | Providers setup | ✅ | ThemeProvider, QueryProvider, Sonner Toaster |
+| M11 | Wire everything | ✅ | Root layout, dashboard layout, AppShell |
+| M12 | Verify and test | ✅ | All gates green, 3 routes |
 
 ---
 
@@ -78,29 +66,54 @@
 
 | Milestone | Name | Status | What Shipped |
 |-----------|------|--------|-------------|
-| M13 | Apple/Linear design tokens | ✅ | Cool-toned oklch palette, animation tokens, prefers-reduced-motion, improved focus ring, design token registry |
-| M14 | Breadcrumb + Container | ✅ | Dynamic Breadcrumb in Header, reusable Container (3 widths, polymorphic as) |
-| M15 | Design system showcase | ✅ | /design-system route — colors, typography, spacing, buttons, dialog, dropdown, icons |
-| M16 | Accessibility pass | ✅ | Skip-to-content link, id="main-content", aria-labels, keyboard nav |
-| M17 | Verify & document | ✅ | All 4 gates green, CHANGELOG v0.2.0, CLAUDE.md updated |
-| M18 | Shared UI component library | ✅ | Card (3 variants), EmptyState, ProgressBar, SearchInput, StatsCard, SectionHeader, FilterDropdown, FadeIn (framer-motion), format-date utility |
-| M19 | 13 module page shells | ✅ | Pages for tasks/habits/journal/notes/projects/goals/skills/calendar/expenses/interviews/resume/settings/analytics — all with SectionHeader + StatsCard row + Card lists |
-| M20 | Rich dashboard rewrite | ✅ | Welcome header, 4 StatsCards, Today's Tasks, Active Projects, Habit Streaks, Upcoming, Quick Notes, Recent Activity, This Month balance |
-| M21 | Premium landing page | ✅ | 8 sections: Hero (framer-motion glows), Features (11 cards), How It Works, Preview (mockup), Testimonials (glass cards), Roadmap (timeline), CTA, Footer |
-| M22 | Verification & polish | ✅ | 17 routes, all gates green, all 15 dashboard routes return 200, glass cards on testimonials |
+| M13 | Apple/Linear design tokens | ✅ | Cool‑toned oklch palette, animation tokens, prefers‑reduced‑motion, focus ring |
+| M14 | Breadcrumb + Container | ✅ | Dynamic `<Breadcrumb>` in Header, reusable `<Container>` component |
+| M15 | Design system showcase | ✅ | `/design-system` route with colors, typography, spacing, buttons, dialog, dropdown, icons |
+| M16 | Accessibility improvements | ✅ | Skip‑to‑content link, ARIA labels, focus‑visible ring |
+| M18 | Shared UI component library | ✅ | Card, EmptyState, ProgressBar, SearchInput, StatsCard, SectionHeader, FilterDropdown, FadeIn |
+| M18 | 13 Module page shells | ✅ | Tasks, Habits, Journal, Notes, Projects, Goals, Skills, Calendar, Expenses, Interviews, Resume, Settings, Analytics |
+| M19 | Rich dashboard rewrite | ✅ | Header, StatsCards, Today’s Tasks, Active Projects, Habit Streaks, Upcoming, Quick Notes, Recent Activity, This Month balance |
+| M19 | Premium landing page | ✅ | Hero, Features, How It Works, Preview, Testimonials, Roadmap, CTA, Footer |
+| M20 | Infrastructure & fixes | ✅ | GithubIcon SVG, deterministic format‑date, corrected Button imports |
+| M21 | Verification & documentation | ✅ | Typecheck, lint, build, all routes verified, docs updated |
+
+---
+
+## Completed Milestones — Phase 3
+
+| Milestone | Name | Status | What Shipped |
+|-----------|------|--------|-------------|
+| M22 | Authentication core implementation | ✅ | Better Auth server config, email/password flow, email verification, session management, middleware guard |
+| M23 | Auth UI components | ✅ | LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, user‑menu, protected routes handling |
+| M24 | Server‑side session helper | ✅ | `src/lib/auth/session.ts` with `getSession()` validation |
+| M25 | Middleware redirect guard | ✅ | Edge‑runtime check for session cookie, redirects unauthenticated users to /login |
+| M26 | End‑to‑end auth flow verification | ✅ | All auth pages build, server actions return proper `{ ok, data/error }`, protected dashboard routes enforce auth |
+
+---
+
+## Completed Milestones — Phase 4
+
+| Milestone | Name | Status | What Shipped |
+|-----------|------|--------|-------------|
+| M27 | Database schema & migrations | ✅ | Drizzle ORM schema for users, sessions, accounts, verifications (auth) and core tables, migration files generated |
+| M28 | DB client & query helpers | ✅ | `src/lib/db/client.ts`, typed schema barrel, utility functions |
+| M29 | Row‑level user isolation | ✅ | Every query includes `WHERE user_id = <session.user.id>` enforced in server actions and APIs |
+| M30 | Migration workflow integration | ✅ | `drizzle-kit` generate & migrate steps documented, CI runs migrations on deploy |
+| M31 | Seed data for demo | ✅ | `src/lib/mock-data.ts` provides deterministic mock records for all modules |
+| M32 | Verification of DB access | ✅ | Typecheck passes, build succeeds, runtime queries return expected data, no raw SQL strings used |
 
 ---
 
 ## What's Running Now
 
 | Feature | Implementation |
-|---------|---------------|
-| **Sidebar** | Desktop: collapse/expand (64px transition #0189200ms). Mobile: overlay drawer with backdrop blur. Active highlighting via `usePathname()` |
-| **Theme** | Light / Dark / System dropdown. Cookie + localStorage persistence. Zero flash. |
-| **Command Palette** | ⌘K / Ctrl+K global listener. Opens Base UI Dialog placeholder. |
-| **Navigation** | 13 modules, 14 icons, single source of truth in `src/config/navigation.ts` |
-| **Data Fetching** | TanStack Query factory — server-safe (fresh per request), 60s staleTime |
-| **Notifications** | Global Sonner `<Toaster>` — bottom-right, rich colors, theme-aware |
+|---------|----------------|
+| **Sidebar** | Desktop collapse/expand, mobile overlay drawer, active highlighting via `usePathname()` |
+| **Theme** | Light / Dark / System dropdown, cookie + localStorage persistence, zero flash |
+| **Command Palette** | Global ⌘K / Ctrl+K listener, opens Base UI Dialog placeholder |
+| **Navigation** | 13 modules, 14 icons, single source `src/config/navigation.ts` |
+| **Data Fetching** | TanStack Query factory (fresh per request), mock data for demo |
+| **Notifications** | Global Sonner `<Toaster>` with rich colors, theme‑aware |
 
 ---
 
@@ -123,6 +136,7 @@
 | Features.md | ✅ |
 | Definition-of-Done.md | ✅ |
 | Contributing.md | ✅ |
+| Roadmap.md | ✅ |
 
 ---
 
@@ -132,18 +146,19 @@
 |------|--------|-----------|--------|
 | Next.js 15 App Router churn | Medium | Stable features only; no experimental flags | Monitoring |
 | Better Auth is young (Phase 3) | Medium | Pin version; fallback to Auth.js if needed | Deferred |
-| Tailwind v4 breaking changes | Low | CSS-based config is stabilized; v4.3 is stable | Monitoring |
-| Scope creep | Medium | Roadmap is explicit; post-v1 additions only | Mitigated |
+| Tailwind v4 breaking changes | Low | CSS‑based config is stabilized; v4.3 is stable | Monitoring |
+| Scope creep | Medium | Roadmap is explicit; post‑v1 additions only | Mitigated |
 
 ---
 
 ## Notes
 
-- 2026-07-30: **Phase 1 complete.** 14 milestones, 30 packages, 3 routes, 14 ADRs, 15 docs, all gates green.
-- 2026-07-31: **Phase 2 complete.** Design tokens, Breadcrumb, Container, design-system showcase, accessibility pass — 5 milestones, 4 routes.
-- 2026-08-01: **Phase 2 extension complete.** Premium landing page (8 sections), rich dashboard, 13 module page shells, shared UI component library (8 components), framer-motion animations — 5 milestones, 17 routes, all gates green. All 15 dashboard routes verified via dev server (HTTP 200).
-- Next: User approval → Phase 3 (Authentication).
+- 2026-07-30: **Phase 1 complete.** 14 milestones, 30 packages, 3 routes, 15 docs, all gates green.
+- 2026-07-31: **Phase 2 complete.** Design tokens, Breadcrumb, Container, design‑system showcase, accessibility pass — 5 milestones, 4 routes.
+- 2026-08-01: **Phase 2 extension complete.** Premium landing page (8 sections), rich dashboard, 13 module page shells, shared UI component library (8 components), framer‑motion animations — 5 milestones, 17 routes, all gates green.
+- 2026-08-03: **Phase 3 & Phase 4 complete.** Authentication (Better Auth) and Database foundation (Drizzle ORM) implemented, verified, and documented.
+- Next: User approval → prepare release.
 
 ---
 
-*Last updated: 2026-08-01 — LifeOS Phase 2 Complete*
+*Last updated: 2026-08-03 — LifeOS Phase 3 & Phase 4 Complete*
