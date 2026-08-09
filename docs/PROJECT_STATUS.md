@@ -1,164 +1,918 @@
 # PROJECT_STATUS.md — Live Project Tracker
 
-> This is the single source of truth for "where are we right now."
-> Updated every sprint. Checked on every milestone.
+> Single source of truth for the current development status of LifeOS.
+> Updated after every completed milestone, release, and project phase.
 
 ---
 
-## At a Glance
+# At a Glance
 
 | Field | Value |
 |-------|-------|
-| **Current Version** | `0.3.0-alpha` |
-| **Current Phase** | Phase 4 — Database Foundation ✅ Complete |
-| **Current Sprint** | Sprint 2 — Landing Page, Dashboard & Module Pages |
-| **Sprint Start** | 2026-08-01 |
-| **Last Updated** | 2026-08-03 |
+| **Project** | LifeOS |
+| **Current Version** | **v0.5.0-alpha** |
+| **Current Phase** | **Phase 5 — Dashboard Foundation & Widget Architecture ✅ Complete** |
+| **Next Phase** | **Phase 6 — Task Management** |
+| **Current Sprint** | Sprint 3 |
+| **Sprint Focus** | Task Management, Business Schemas & Server Actions |
+| **Repository Status** | Active Development |
+| **License** | MIT |
+| **Last Updated** | 2026-08-08 |
 
 ---
 
-## Phase Status
+# Project Progress
 
 | Phase | Name | Status |
-|-------|------|--------|
-| Phase 0 | Documentation | ✅ Complete |
-| Phase 1 | Project Setup | ✅ Complete |
-| Phase 2 | Design System & Layout Shell | ✅ Complete |
+|------|------|--------|
+| Phase 0 | Documentation & Planning | ✅ Complete |
+| Phase 1 | Project Foundation | ✅ Complete |
+| Phase 2 | Design System & Application Shell | ✅ Complete |
 | Phase 3 | Authentication | ✅ Complete |
 | Phase 4 | Database Foundation | ✅ Complete |
-| Phase 5 | Dashboard | 🔜 Upcoming |
-| Phase 6 | Task Management | 🔜 Upcoming |
-| Phase 7 | Habit Tracker | 🔜 Upcoming |
-| Phase 8 | Journal | 🔜 Upcoming |
-| Phase 9 | Notes | 🔜 Upcoming |
-| Phase 10 | Projects | 🔜 Upcoming |
-| Phase 11 | Goal Tracker | 🔜 Upcoming |
-| Phase 12 | Calendar | 🔜 Upcoming |
-| Phase 13 | Expense Tracker | 🔜 Upcoming |
-| Phase 14 | Interview Tracker | 🔜 Upcoming |
-| Phase 15 | Resume Manager | 🔜 Upcoming |
-| Phase 16 | Analytics | 🔜 Upcoming |
-| Phase 17 | Settings & Profile | 🔜 Upcoming |
-| Phase 18 | Polish, Production, PWA | 🔜 Upcoming |
+| Phase 5 | Dashboard | ✅ Complete |
+| Phase 6 | Task Management | 🚧 Next |
+| Phase 7 | Habit Tracker | ⏳ Planned |
+| Phase 8 | Journal | ⏳ Planned |
+| Phase 9 | Notes | ⏳ Planned |
+| Phase 10 | Projects | ⏳ Planned |
+| Phase 11 | Goal Tracker | ⏳ Planned |
+| Phase 12 | Calendar | ⏳ Planned |
+| Phase 13 | Expense Tracker | ⏳ Planned |
+| Phase 14 | Interview Tracker | ⏳ Planned |
+| Phase 15 | Resume Manager | ⏳ Planned |
+| Phase 16 | Analytics | ⏳ Planned |
+| Phase 17 | Settings & Profile | ⏳ Planned |
+| Phase 18 | Production, PWA & Deployment | ⏳ Planned |
 
 ---
 
-## Completed Milestones — Phase 1
+# Overall Progress
 
-| Milestone | Name | Status | What Shipped |
-|-----------|------|--------|-------------|
-| M1 | Next.js 15 scaffold | ✅ | Next.js 15.5, React 19, TypeScript strict, Tailwind v4 |
-| M2 | Dependencies installed | ✅ | 18 deps + 12 devDeps |
-| M3 | shadcn/ui v2 init | ✅ | New York base-nova, Base UI, neutral colors, Button |
-| M4 | Tooling configured | ✅ | ESLint 9 flat config, Prettier + Tailwind sort, Husky + lint-staged |
-| M5 | Environment validation | ✅ | t3-env + Zod — fail-fast |
-| M6 | Production folder structure | ✅ | 84 directories, .gitkeep docs, FOLDER_STRUCTURE.md |
-| M7 | Core configuration | ✅ | Geist fonts, next-themes ThemeProvider, siteConfig |
-| M8 | Base page files | ✅ | loading, error, global-error, not-found, (marketing)/(dashboard) route groups |
-| M9 | Interactive layout shell | ✅ | Zustand sidebar, navigation config, header, breadcrumb, theme toggle, command palette |
-| M10 | Providers setup | ✅ | ThemeProvider, QueryProvider, Sonner Toaster |
-| M11 | Wire everything | ✅ | Root layout, dashboard layout, AppShell |
-| M12 | Verify and test | ✅ | All gates green, 3 routes |
-
----
-
-## Completed Milestones — Phase 2
-
-| Milestone | Name | Status | What Shipped |
-|-----------|------|--------|-------------|
-| M13 | Apple/Linear design tokens | ✅ | Cool‑toned oklch palette, animation tokens, prefers‑reduced‑motion, focus ring |
-| M14 | Breadcrumb + Container | ✅ | Dynamic `<Breadcrumb>` in Header, reusable `<Container>` component |
-| M15 | Design system showcase | ✅ | `/design-system` route with colors, typography, spacing, buttons, dialog, dropdown, icons |
-| M16 | Accessibility improvements | ✅ | Skip‑to‑content link, ARIA labels, focus‑visible ring |
-| M18 | Shared UI component library | ✅ | Card, EmptyState, ProgressBar, SearchInput, StatsCard, SectionHeader, FilterDropdown, FadeIn |
-| M18 | 13 Module page shells | ✅ | Tasks, Habits, Journal, Notes, Projects, Goals, Skills, Calendar, Expenses, Interviews, Resume, Settings, Analytics |
-| M19 | Rich dashboard rewrite | ✅ | Header, StatsCards, Today’s Tasks, Active Projects, Habit Streaks, Upcoming, Quick Notes, Recent Activity, This Month balance |
-| M19 | Premium landing page | ✅ | Hero, Features, How It Works, Preview, Testimonials, Roadmap, CTA, Footer |
-| M20 | Infrastructure & fixes | ✅ | GithubIcon SVG, deterministic format‑date, corrected Button imports |
-| M21 | Verification & documentation | ✅ | Typecheck, lint, build, all routes verified, docs updated |
-
----
-
-## Completed Milestones — Phase 3
-
-| Milestone | Name | Status | What Shipped |
-|-----------|------|--------|-------------|
-| M22 | Authentication core implementation | ✅ | Better Auth server config, email/password flow, email verification, session management, middleware guard |
-| M23 | Auth UI components | ✅ | LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm, user‑menu, protected routes handling |
-| M24 | Server‑side session helper | ✅ | `src/lib/auth/session.ts` with `getSession()` validation |
-| M25 | Middleware redirect guard | ✅ | Edge‑runtime check for session cookie, redirects unauthenticated users to /login |
-| M26 | End‑to‑end auth flow verification | ✅ | All auth pages build, server actions return proper `{ ok, data/error }`, protected dashboard routes enforce auth |
-
----
-
-## Completed Milestones — Phase 4
-
-| Milestone | Name | Status | What Shipped |
-|-----------|------|--------|-------------|
-| M27 | Database schema & migrations | ✅ | Drizzle ORM schema for users, sessions, accounts, verifications (auth) and core tables, migration files generated |
-| M28 | DB client & query helpers | ✅ | `src/lib/db/client.ts`, typed schema barrel, utility functions |
-| M29 | Row‑level user isolation | ✅ | Every query includes `WHERE user_id = <session.user.id>` enforced in server actions and APIs |
-| M30 | Migration workflow integration | ✅ | `drizzle-kit` generate & migrate steps documented, CI runs migrations on deploy |
-| M31 | Seed data for demo | ✅ | `src/lib/mock-data.ts` provides deterministic mock records for all modules |
-| M32 | Verification of DB access | ✅ | Typecheck passes, build succeeds, runtime queries return expected data, no raw SQL strings used |
-
----
-
-## What's Running Now
-
-| Feature | Implementation |
-|---------|----------------|
-| **Sidebar** | Desktop collapse/expand, mobile overlay drawer, active highlighting via `usePathname()` |
-| **Theme** | Light / Dark / System dropdown, cookie + localStorage persistence, zero flash |
-| **Command Palette** | Global ⌘K / Ctrl+K listener, opens Base UI Dialog placeholder |
-| **Navigation** | 13 modules, 14 icons, single source `src/config/navigation.ts` |
-| **Data Fetching** | TanStack Query factory (fresh per request), mock data for demo |
-| **Notifications** | Global Sonner `<Toaster>` with rich colors, theme‑aware |
-
----
-
-## Documentation Inventory (16 docs)
-
-| Document | Status |
+| Category | Status |
 |----------|--------|
-| README.md | ✅ |
-| Architecture.md | ✅ |
-| DATABASE.md | ✅ |
-| API.md | ✅ |
-| DEPENDENCIES.md | ✅ |
-| Engineering-Handbook.md | ✅ |
-| FOLDER_STRUCTURE.md | ✅ |
-| CHANGELOG.md | ✅ |
-| PROJECT_STATUS.md | ✅ |
-| PRD.md | ✅ |
-| Design-System.md | ✅ |
-| Security.md | ✅ |
-| Features.md | ✅ |
-| Definition-of-Done.md | ✅ |
-| Contributing.md | ✅ |
-| Roadmap.md | ✅ |
+| Documentation | ✅ |
+| Architecture | ✅ |
+| Project Setup | ✅ |
+| Design System | ✅ |
+| Responsive Layout | ✅ |
+| Landing Website | ✅ |
+| Dashboard UI | ✅ |
+| Authentication | ✅ |
+| Database | ✅ |
+| API Infrastructure | 🚧 |
+| Dashboard Logic | ✅ |
+| Task Module | ⏳ |
+| Habit Module | ⏳ |
+| Journal | ⏳ |
+| Notes | ⏳ |
+| Projects | ⏳ |
+| Goals | ⏳ |
+| Calendar | ⏳ |
+| Expenses | ⏳ |
+| Interviews | ⏳ |
+| Resume Builder | ⏳ |
+| Analytics | ⏳ |
+| Settings | ⏳ |
+| Production Deployment | ⏳ |
 
 ---
 
-## Known Risks
+# Completed Milestones — Phase 0
+
+## Documentation & Planning
+
+**Status:** ✅ Complete
+
+**Release:** `v0.0.1`
+
+### Objectives
+
+- Define complete product vision
+- Establish engineering standards
+- Prepare project architecture
+- Design module boundaries
+- Document development workflow
+
+---
+
+## Milestones
+
+| Milestone | Status | What Shipped |
+|-----------|--------|-------------|
+| P0-M1 | ✅ | Product Requirements Document (PRD) |
+| P0-M2 | ✅ | Engineering Handbook |
+| P0-M3 | ✅ | Architecture documentation |
+| P0-M4 | ✅ | Database planning |
+| P0-M5 | ✅ | API conventions |
+| P0-M6 | ✅ | Security documentation |
+| P0-M7 | ✅ | Features documentation |
+| P0-M8 | ✅ | Folder structure specification |
+| P0-M9 | ✅ | Dependency documentation |
+| P0-M10 | ✅ | Roadmap |
+| P0-M11 | ✅ | Definition of Done |
+| P0-M12 | ✅ | CHANGELOG |
+| P0-M13 | ✅ | PROJECT_STATUS |
+| P0-M14 | ✅ | Claude engineering memory |
+| P0-M15 | ✅ | Architectural Decision Records (ADR-001 → ADR-014) |
+
+---
+
+## Deliverables
+
+### Documentation
+
+- README
+- PRD
+- Roadmap
+- Architecture
+- API Documentation
+- Database Documentation
+- Security Documentation
+- Features Documentation
+- Engineering Handbook
+- Folder Structure Guide
+- Dependency Reference
+- Definition of Done
+- CHANGELOG
+- PROJECT_STATUS
+
+### Claude Configuration
+
+- CLAUDE.md
+- DECISIONS.md
+- RULES.md
+- MCP.md
+- SKILLS.md
+
+### Planning
+
+- Complete application architecture
+- Module isolation strategy
+- Design language definition
+- Folder hierarchy
+- Development workflow
+- Release strategy
+- Versioning strategy
+
+---
+
+# Completed Milestones — Phase 1
+
+## Project Foundation
+
+**Status:** ✅ Complete
+
+**Release:** `v0.1.0-alpha`
+
+**Objective**
+
+Build a production-grade Next.js foundation that future phases can build upon.
+
+---
+
+## Milestones
+
+| Milestone | Status | What Shipped |
+|-----------|--------|-------------|
+| M16 | ✅ | Next.js 15.5 scaffold (React 19, TypeScript Strict, App Router) |
+| M17 | ✅ | Core dependencies and development tooling |
+| M18 | ✅ | shadcn/ui v2 initialized |
+| M19 | ✅ | ESLint, Prettier, Husky & lint-staged configured |
+| M20 | ✅ | Environment validation using t3-env + Zod |
+| M21 | ✅ | Production folder structure |
+| M22 | ✅ | Global configuration (fonts, metadata, theme) |
+| M23 | ✅ | Base application pages |
+| M24 | ✅ | Interactive application shell |
+| M25 | ✅ | Providers architecture |
+| M26 | ✅ | Root layout integration |
+| M27 | ✅ | Verification and quality gates |
+
+---
+
+## Major Deliverables
+
+### Application Foundation
+
+- Next.js 15.5
+- React 19
+- TypeScript Strict Mode
+- App Router
+- Route Groups
+- Server Components
+- Client Components architecture
+
+### Styling
+
+- Tailwind CSS v4
+- CSS-based configuration
+- OKLCH color support
+- CSS variables
+- Responsive utilities
+
+### UI
+
+- shadcn/ui v2
+- Base UI primitives
+- Lucide React
+- Geist Fonts
+- next-themes
+
+### State Management
+
+- Zustand
+- TanStack Query
+- Sonner Notifications
+
+### Development Tooling
+
+- ESLint 9
+- Prettier 3
+- Husky
+- lint-staged
+- pnpm Workspace
+
+### Layout Infrastructure
+
+- Responsive Sidebar
+- Mobile Navigation
+- Header
+- Footer
+- Command Palette
+- Theme Switcher
+- Navigation Registry
+- Layout Constants
+
+### Verification
+
+| Gate | Status |
+|------|--------|
+| TypeScript | ✅ |
+| ESLint | ✅ |
+| Prettier | ✅ |
+| Production Build | ✅ |
+
+### Production Output
+
+- Static Routes Generated
+- Responsive Layout
+- Marketing Route Group
+- Dashboard Route Group
+- Error Boundaries
+- Loading UI
+- 404 Page
+- Global Providers
+
+---
+
+> **Next:** Phase 2 — Design System & Application Shell
+
+---
+
+# Completed Milestones — Phase 2
+
+## Design System & Application Experience
+
+**Status:** ✅ Complete
+
+**Release:** `v0.2.0-alpha` & `v0.2.1-alpha`
+
+**Objective**
+
+Transform the project from a technical foundation into a polished, production-quality application by building a reusable design system, premium marketing website, rich dashboard, and shared UI library.
+
+---
+
+## Milestones
+
+| Milestone | Status | What Shipped |
+|-----------|--------|-------------|
+| M28 | ✅ | Apple/Linear-inspired design tokens |
+| M29 | ✅ | Dynamic Breadcrumb & reusable Container components |
+| M30 | ✅ | Complete Design System showcase |
+| M31 | ✅ | Accessibility improvements |
+| M32 | ✅ | Shared UI Component Library |
+| M33 | ✅ | Module page shells |
+| M34 | ✅ | Rich Dashboard redesign |
+| M35 | ✅ | Premium Landing Page |
+| M36 | ✅ | Infrastructure improvements & verification |
+
+---
+
+## Major Deliverables
+
+### Design Language
+
+- Apple-inspired UI
+- Linear-inspired spacing
+- Notion-inspired minimalism
+- Cool-toned OKLCH palette
+- Glassmorphism support
+- Semantic color system
+- Typography scale
+- Motion tokens
+- Animation utilities
+- Focus ring improvements
+- WCAG accessibility
+
+---
+
+### Shared UI Components
+
+Reusable production-ready components:
+
+- Card
+- EmptyState
+- ProgressBar
+- SearchInput
+- StatsCard
+- SectionHeader
+- FilterDropdown
+- FadeIn
+- Container
+- Breadcrumb
+
+---
+
+### Landing Website
+
+Eight production-ready marketing sections:
+
+- Hero
+- Features
+- How It Works
+- Product Preview
+- Testimonials
+- Roadmap
+- Call To Action
+- Footer
+
+Features include:
+
+- Animated backgrounds
+- Gradient headlines
+- Framer Motion animations
+- Responsive layout
+- Theme-aware components
+- Interactive previews
+
+---
+
+### Dashboard Experience
+
+Dashboard rewritten using production layout patterns.
+
+Implemented:
+
+- Welcome header
+- Statistics cards
+- Today's Tasks
+- Active Projects
+- Habit Streaks
+- Upcoming Schedule
+- Quick Notes
+- Recent Activity
+- Monthly Overview
+
+---
+
+### Module Pages
+
+Complete shell pages for:
+
+- Dashboard
+- Tasks
+- Habits
+- Journal
+- Notes
+- Projects
+- Goals
+- Skills
+- Calendar
+- Expenses
+- Interviews
+- Resume
+- Analytics
+- Settings
+
+---
+
+### Accessibility
+
+Implemented:
+
+- Skip-to-content
+- Keyboard navigation
+- Focus-visible support
+- Proper ARIA attributes
+- Reduced-motion support
+- Screen-reader improvements
+
+---
+
+### Infrastructure Improvements
+
+- GitHub brand icon
+- Stable date formatting
+- Hydration-safe utilities
+- Button import cleanup
+- Component consistency
+- Shared utilities
+
+---
+
+### Verification
+
+| Gate | Status |
+|------|--------|
+| TypeScript | ✅ |
+| ESLint | ✅ |
+| Prettier | ✅ |
+| Production Build | ✅ |
+
+Production build verified successfully.
+
+---
+
+# Completed Milestones — Phase 3 $ Phase 4
+
+## Authentication
+
+**Status:** ✅ Complete
+
+**Release:** `v0.3.0-alpha`
+
+**Objective**
+
+Implement a secure, production-ready authentication system with email/password login, OAuth providers, session management, protected routes, and reusable authentication infrastructure.
+
+---
+
+## Milestones
+
+| Milestone | Status | What Shipped |
+|-----------|--------|-------------|
+| M37 | ✅ | Better Auth server implementation |
+| M38 | ✅ | Authentication pages & reusable forms |
+| M39 | ✅ | Server-side session utilities |
+| M40 | ✅ | Route protection middleware |
+| M41 | ✅ | End-to-end authentication verification |
+
+---
+
+## Major Deliverables
+
+### Better Auth Integration
+
+Production-ready Better Auth configuration including:
+
+- Better Auth server
+- API route
+- Session handling
+- Cookie configuration
+- CSRF protection
+- Secure authentication flow
+
+---
+
+### Email Authentication
+
+Implemented:
+
+- User Registration
+- Login
+- Logout
+- Forgot Password
+- Password Reset
+- Email Verification
+
+Complete authentication lifecycle supported.
+
+---
+
+### OAuth Providers
+
+Configured providers:
+
+- Google OAuth
+- GitHub OAuth
+
+Features:
+
+- One-click sign in
+- Secure OAuth callback handling
+- Provider configuration
+- Session persistence
+
+---
+
+### Authentication Pages
+
+Implemented pages:
+
+- Login
+- Register
+- Forgot Password
+- Reset Password
+- Verify Email
+
+All pages include:
+
+- React Hook Form
+- Zod validation
+- Error handling
+- Loading states
+- Success feedback
+- Responsive layout
+
+---
+
+### Authentication Components
+
+Reusable components include:
+
+- LoginForm
+- RegisterForm
+- ForgotPasswordForm
+- ResetPasswordForm
+- UserMenu
+- Input
+- Label
+
+---
+
+### Session Management
+
+Implemented:
+
+- HTTP-only cookies
+- Secure session storage
+- Session validation
+- Session helper utilities
+- Automatic authentication checks
+
+---
+
+### Protected Routes
+
+Implemented middleware protecting:
+
+- Dashboard
+- Future authenticated modules
+
+Middleware automatically:
+
+- Validates sessions
+- Redirects unauthenticated users
+- Preserves requested URL
+- Prevents unauthorized access
+
+---
+
+### Authentication Infrastructure
+
+Added:
+
+- Auth configuration
+- Client helpers
+- Server helpers
+- Session helper
+- Environment validation
+- Auth middleware
+- Auth API handler
+
+---
+
+### Security
+
+Implemented:
+
+- Secure cookies
+- CSRF protection
+- Password hashing
+- Session validation
+- OAuth security
+- Route protection
+- Server-side authentication checks
+
+---
+
+### Developer Experience
+
+Developers can now:
+
+- Configure authentication using environment variables
+- Enable Google OAuth
+- Enable GitHub OAuth
+- Extend providers
+- Reuse auth helpers
+- Protect new routes easily
+
+---
+
+### Verification
+
+| Gate | Status |
+|------|--------|
+| TypeScript | ✅ |
+| ESLint | ✅ |
+| Production Build | ✅ |
+| Authentication Flow | ✅ |
+| Protected Routes | ✅ |
+| OAuth Configuration | ✅ |
+
+Authentication system fully verified and ready for future application modules.
+
+---
+
+> **Next:** Phase 5 — Database Foundation $ Widget Architecture
+
+---
+
+# Completed Milestones — Phase 5
+
+## Dashboard Foundation & Widget Architecture
+
+**Status:** ✅ Complete
+
+**Release:** `v0.5.0-alpha`
+
+**Objective**
+
+Replace the monolithic 333-line dashboard page with a pure composition layer backed by a reusable widget architecture: a `ServiceResult` contract, typed module DataSources and Services, a dashboard aggregator, UI widget definitions, and eleven presentational widgets — each fed exactly its own data slice.
+
+---
+
+## Milestones
+
+| Milestone | Status | What Shipped |
+|-----------|--------|-------------|
+| M42 | ✅ | `ServiceResult<T>` discriminated union + module contracts (9 modules + dashboard) |
+| M43 | ✅ | DataSources (interface + mock impl + factory) for all 9 modules |
+| M44 | ✅ | Module Services returning `ServiceResult<XxxWidgetData>` |
+| M45 | ✅ | Dashboard Aggregator — `getDashboardSnapshot()` parallel composition |
+| M46 | ✅ | Dashboard constants — `WIDGET_DEFINITIONS`, icons, grid config |
+| M47 | ✅ | 11 pure-presentational dashboard widgets (zero business logic) |
+| M48 | ✅ | Dashboard page refactor (333 → ~58 lines, pure composition) |
+| M49 | ✅ | Build & verify — typecheck, lint, build (24 routes) |
+
+---
+
+## Major Deliverables
+
+### ServiceResult Pattern
+
+A discriminated-union result contract (`{ success, data } | { success: false, message }`) returned by every DataSource, Service, and the dashboard aggregator. No helper functions, no classes, no throwing.
+
+---
+
+### Module Contracts
+
+Typed entities and widget data slices for all 9 modules plus the dashboard (`src/modules/*/types.ts`), modeling Drizzle table shapes ahead of Phase 6.
+
+---
+
+### DataSources
+
+Per-module interface + mock implementation + `createXxxDataSource()` factory. The only place mock data is imported; `toDomain()` isolates the mock shape behind the datasource interface. Swap to Drizzle in Phase 6 with zero changes to services or widgets.
+
+---
+
+### Module Services
+
+Plain async functions returning `ServiceResult<XxxWidgetData>`, owning filter/sort/count/slice logic. An optional datasource parameter provides dependency injection for testability.
+
+---
+
+### Dashboard Aggregator
+
+`getDashboardSnapshot()` composes `SnapshotContributor[]` via `Promise.all` — one failed service never breaks the other eight.
+
+---
+
+### Dashboard Widgets
+
+Eleven pure-presentational widgets (WelcomeHeader, StatsRow, 9 data-backed) each receiving exactly its own `WidgetState` slice. Zero business logic.
+
+---
+
+### Dashboard Page Refactor
+
+Dashboard page rewritten from 333 lines to ~58 lines of pure composition; computed `welcome`/`stats` slices derived inside the aggregator.
+
+---
+
+### Architecture Decisions
+
+- ADRs **D1–D14** recorded — independent widget slices, `WidgetState` discriminated union, two registries joined on `WidgetKey`, explicit `DashboardSnapshot` interface, one justified `as` cast.
+
+---
+
+### Verification
+
+| Gate | Status |
+|------|--------|
+| TypeScript | ✅ |
+| ESLint | ✅ |
+| Production Build | ✅ |
+
+Production build verified: 24 routes, `/dashboard` prerendered static (`○`).
+
+---
+
+> **Next:** Phase 6 — Task Management & Business Schemas
+
+---
+
+# What's Running Now
+
+The following systems are currently implemented and fully functional in the application.
+
+| Feature | Status | Implementation |
+|----------|--------|----------------|
+| **Authentication** | ✅ | Better Auth with Email/Password, Google OAuth, GitHub OAuth, session cookies, protected routes |
+| **Authorization** | ✅ | Middleware guards for authenticated dashboard routes |
+| **Session Management** | ✅ | Server-side session helper (`getSession()`), secure HTTP-only cookies |
+| **Database** | ✅ | PostgreSQL + Drizzle ORM with typed schema and generated migrations |
+| **Routing** | ✅ | Next.js 15 App Router with Marketing/Auth/Dashboard route groups |
+| **Dashboard Layout** | ✅ | Responsive AppShell, collapsible sidebar, sticky header |
+| **Navigation** | ✅ | 14 navigation modules driven by `src/config/navigation.ts` |
+| **Landing Page** | ✅ | Premium marketing website with Hero, Features, Roadmap, CTA, Footer |
+| **Design System** | ✅ | Apple/Linear inspired components, design tokens, accessibility support |
+| **Theme System** | ✅ | Light / Dark / System with persistent preference and zero flash |
+| **Forms** | ✅ | React Hook Form + Zod validation across authentication flows |
+| **Notifications** | ✅ | Sonner global toast provider |
+| **State Management** | ✅ | Zustand for UI state, TanStack Query infrastructure |
+| **Mock Data** | ✅ | Deterministic demo data powering dashboard and module pages |
+| **Dashboard Architecture** | ✅ | `ServiceResult` contract, Module DataSources + Services, aggregator (`getDashboardSnapshot`) |
+| **Dashboard Widgets** | ✅ | 11 pure-presentational widgets, each fed its own typed `WidgetState` slice |
+
+---
+
+# Current Technology Status
+
+| Layer | Technology | Status |
+|--------|------------|--------|
+| Framework | Next.js 15.5 | ✅ Stable |
+| React | React 19 | ✅ Stable |
+| Language | TypeScript (Strict) | ✅ Enabled |
+| Styling | Tailwind CSS v4 | ✅ Configured |
+| Components | shadcn/ui v2 | ✅ Configured |
+| Icons | Lucide React | ✅ Configured |
+| Theme | next-themes | ✅ Working |
+| Authentication | Better Auth | ✅ Complete |
+| Database | PostgreSQL | ✅ Connected |
+| ORM | Drizzle ORM | ✅ Complete |
+| Validation | Zod 4 | ✅ Complete |
+| Forms | React Hook Form | ✅ Complete |
+| State | Zustand | ✅ Complete |
+| Server Cache | TanStack Query | ✅ Complete |
+| Notifications | Sonner | ✅ Complete |
+| Package Manager | pnpm | ✅ Complete |
+| Linting | ESLint 9 | ✅ Passing |
+| Formatting | Prettier 3 | ✅ Passing |
+
+---
+
+# Repository Statistics
+
+| Metric | Value |
+|---------|------:|
+| Current Version | **0.5.0-alpha** |
+| Completed Phases | **6 (Phase 0–5)** |
+| Completed Milestones | **49** |
+| Production Routes | **24** |
+| Navigation Modules | **14** |
+| Shared UI Components | **15+** |
+| Authentication Pages | **5** |
+| Database Tables | **Auth + Core Foundation** |
+| Documentation Files | **15+** |
+| Git Tags | **v0.0.1 → v0.5.0-alpha** |
+| Build Status | ✅ Passing |
+| TypeScript | ✅ Passing |
+| ESLint | ✅ Passing |
+
+---
+
+# Documentation Inventory
+
+| Document | Purpose | Status |
+|----------|---------|--------|
+| README.md | Project overview | ✅ |
+| CHANGELOG.md | Version history | ✅ |
+| PROJECT_STATUS.md | Live project tracker | ✅ |
+| Roadmap.md | Development roadmap | ✅ |
+| Architecture.md | System architecture | ✅ |
+| DATABASE.md | Database design | ✅ |
+| API.md | API conventions | ✅ |
+| FEATURES.md | Module catalogue | ✅ |
+| SECURITY.md | Authentication & security | ✅ |
+| Design-System.md | Design language | ✅ |
+| Engineering-Handbook.md | Engineering standards | ✅ |
+| FOLDER_STRUCTURE.md | Repository organization | ✅ |
+| CONTRIBUTING.md | Contribution workflow | ✅ |
+| Definition-of-Done.md | Completion checklist | ✅ |
+| CLAUDE.md | AI engineering context | ✅ |
+
+---
+
+# Upcoming Development Roadmap
+
+| Phase | Focus | Status |
+|--------|-------|--------|
+| **Phase 6** | Task Management | 🔜 |
+| **Phase 7** | Habit Tracker | 🔜 |
+| **Phase 8** | Journal | 🔜 |
+| **Phase 9** | Notes | 🔜 |
+| **Phase 10** | Projects | 🔜 |
+| **Phase 11** | Goal Tracker | 🔜 |
+| **Phase 12** | Calendar | 🔜 |
+| **Phase 13** | Expense Tracker | 🔜 |
+| **Phase 14** | Interview Tracker | 🔜 |
+| **Phase 15** | Resume Manager | 🔜 |
+| **Phase 16** | Analytics | 🔜 |
+| **Phase 17** | Settings & User Profile | 🔜 |
+| **Phase 18** | Production Polish, PWA & Deployment | 🔜 |
+
+---
+
+# Known Risks
 
 | Risk | Impact | Mitigation | Status |
-|------|--------|-----------|--------|
-| Next.js 15 App Router churn | Medium | Stable features only; no experimental flags | Monitoring |
-| Better Auth is young (Phase 3) | Medium | Pin version; fallback to Auth.js if needed | Deferred |
-| Tailwind v4 breaking changes | Low | CSS‑based config is stabilized; v4.3 is stable | Monitoring |
-| Scope creep | Medium | Roadmap is explicit; post‑v1 additions only | Mitigated |
+|------|--------|------------|--------|
+| Better Auth ecosystem maturity | Medium | Pin package versions and monitor releases | Monitoring |
+| Scope expansion | Medium | Follow roadmap strictly | Controlled |
+| Tailwind CSS v4 updates | Low | Stay on stable releases | Monitoring |
+| Database schema evolution | Medium | Versioned Drizzle migrations | Managed |
+| Authentication provider changes | Low | OAuth providers configurable via environment variables | Managed |
 
 ---
 
-## Notes
+# Next Milestones
 
-- 2026-07-30: **Phase 1 complete.** 14 milestones, 30 packages, 3 routes, 15 docs, all gates green.
-- 2026-07-31: **Phase 2 complete.** Design tokens, Breadcrumb, Container, design‑system showcase, accessibility pass — 5 milestones, 4 routes.
-- 2026-08-01: **Phase 2 extension complete.** Premium landing page (8 sections), rich dashboard, 13 module page shells, shared UI component library (8 components), framer‑motion animations — 5 milestones, 17 routes, all gates green.
-- 2026-08-03: **Phase 3 & Phase 4 complete.** Authentication (Better Auth) and Database foundation (Drizzle ORM) implemented, verified, and documented.
-- Next: User approval → prepare release.
+The next development phase focuses on the first business module — Task Management — connecting real Drizzle schemas to the Phase 5 dashboard architecture.
+
+### Planned for Phase 6
+
+- Create business schemas (tasks, habits, journal, etc.) with Drizzle migrations
+- Implement Task Management module (CRUD + server actions)
+- Replace mock DataSources with Drizzle-backed implementations
+- Connect dashboard widgets to PostgreSQL with user-specific queries
+- Module `actions.ts` + `validation.ts` for mutations
 
 ---
 
-*Last updated: 2026-08-03 — LifeOS Phase 3 & Phase 4 Complete*
+# Release Timeline
+
+| Version | Date | Description |
+|----------|------|-------------|
+| **0.0.1** | 2026-07-29 | Documentation Foundation |
+| **0.1.0-alpha** | 2026-07-30 | Project Setup |
+| **0.2.0-alpha** | 2026-07-31 | Design System |
+| **0.2.1-alpha** | 2026-08-01 | Landing Page & Dashboard |
+| **0.3.0-alpha** | 2026-08-04 | Authentication |
+| **0.4.0-alpha** | 2026-08-04 | Database Foundation |
+| **0.5.0-alpha** | 2026-08-09 | Dashboard Foundation & Widget Architecture |
+
+---
+
+# Development Notes
+
+## Completed
+
+- ✅ Phase 0 — Documentation
+- ✅ Phase 1 — Project Setup
+- ✅ Phase 2 — Design System & UI
+- ✅ Phase 3 — Authentication
+- ✅ Phase 4 — Database Foundation
+- ✅ Phase 5 — Dashboard Foundation & Widget Architecture
+
+## Current Focus
+
+Preparing Phase 6 — Task Management, business schemas, and connecting widgets to PostgreSQL.
+
+---
+
+# Verification Summary
+
+All quality gates currently pass successfully.
+
+| Verification | Status |
+|--------------|--------|
+| pnpm typecheck | ✅ Pass |
+| pnpm lint | ✅ Pass |
+| pnpm build | ✅ Pass |
+| Authentication Routes | ✅ Verified |
+| Database Configuration | ✅ Verified |
+| Middleware Protection | ✅ Verified |
+| Dashboard Build (24 routes) | ✅ Verified |
+
+---
+
+*Last Updated: 2026-08-08*
+
+**Current Release:** `v0.5.0-alpha`
+
+**Project Status:** Phase 5 — Dashboard Foundation & Widget Architecture Complete ✅
+
+**Next Target:** Phase 6 — Task Management

@@ -1,103 +1,72 @@
 # Architecture — LifeOS System Design
 
-> **Version:** 0.1.0-alpha  
-> **Last updated:** 2026-07-29  
-> **Status:** Phase 0 — Documentation  
+> **Version:** 0.5.0-alpha  
+> **Last updated:** 2026-08-08  
+> **Status:** Phase 5 complete — Dashboard Foundation & Widget Architecture
 
 ---
 
 ## Architecture Overview
 
-LifeOS is a **modular monolithic** web application with a thin routing layer, isolated feature modules, and a shared infrastructure layer.
+LifeOS is a **modular monolithic** web application: a thin Next.js routing layer, isolated feature modules, a shared infrastructure layer, and a composition-first dashboard. Business logic lives in modules; `app/` composes, never implements.
 
 ```
-                              ┌──────────────────────────┐
-                              │        User (Browser)      │
-                              └────────────┬─────────────┘
-                                           │ HTTPS
-                                           ▼
-┌──────────────────────────────────────────────────────────┐
-│                     Vercel Edge (CDN)                      │
-│  ┌─────────────┐  ┌──────────────┐  ┌──────────────────┐ │
-│  │ Static Cache │  │ ISR Cache    │  │ Middleware Auth   │ │
-│  └─────────────┘  └──────────────┘  └──────────────────┘ │
-└──────────────────────────┬───────────────────────────────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────────┐
-│                  Next.js 15 App Router                      │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │                    app/                               │  │
-│  │  (auth)/          (dashboard)/        api/            │  │
-│  │    login/           dashboard/        route-handlers  │  │
-│  │    register/        tasks/                            │  │
-│  │                     ...14 modules...                  │  │
-│  │                                                       │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │                  modules/                             │  │
-│  │                                                       │  │
-│  │  tasks/   habits/   journal/   notes/   projects/     │  │
-│  │    │         │         │          │          │         │  │
-│  │    ├─ actions.ts                                       │  │
-│  │    ├─ types.ts                                         │  │
-│  │    ├─ validation.ts                                    │  │
-│  │    ├─ components/                                      │  │
-│  │    └─ hooks/                                           │  │
-│  │                                                       │  │
-│  │  goals/   calendar/  interviews/  expenses/  resume/   │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │                    lib/                               │  │
-│  │                                                       │  │
-│  │  ┌─────────┐ ┌──────────┐ ┌───────────┐ ┌────────┐  │  │
-│  │  │ db/     │ │ auth/    │ │ ai/         │ │ utils/  │  │  │
-│  │  │ Drizzle │ │ Better   │ │ providers/  │ │ helpers │  │  │
-│  │  │ schema  │ │ Auth     │ │ nvidia/     │ └────────┘  │  │
-│  │  │ client   │ └──────────┘ │ ollama/    │              │  │
-│  │  └─────────┘             │ │ openrouter/ │              │  │
-│  │                          │ └───────────┘              │  │
-│  │  ┌─────────┐ ┌──────────┐ ┌───────────┐              │  │
-│  │  │ email/  │ │ storage/ │ │ constants/│              │  │
-│  │  └─────────┘ └──────────┘ └───────────┘              │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │               components/                             │  │
-│  │                                                       │  │
-│  │  ┌────────┐  ┌─────────────┐  ┌───────────────────┐  │  │
-│  │  │ ui/    │  │ layout/      │  │ shared/            │  │  │
-│  │  │ button│  │ sidebar      │  │ date-picker        │  │  │
-│  │  │ card  │  │ header       │  │ command-palette   │  │  │
-│  │  │ input │  │ shell        │  │ rich-editor        │  │  │
-│  │  │ dialog│  └─────────────┘  │ drag-sort          │  │  │
-│  │  └────────┘                   └───────────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────┬────────────────────────────┘
-                              │
-                              ▼
-              ┌───────────────────────────────┐
-              │        Vercel Serverless       │
-              │  ┌─────────────┐ ┌──────────┐ │
-              │  │ API Routes  │ │ Server    │ │
-              │  │ (Route      │ │ Actions   │ │
-              │  │  Handlers)  │ │           │ │
-              │  └─────────────┘ └──────────┘ │
-              └───────────────┬───────────────┘
-                              │
-                              ▼
-              ┌───────────────────────────────┐
-              │      Neon PostgreSQL           │
-              │  (Serverless Database)         │
-              │                              │
-              │  ┌────────┐  ┌────────────┐  │
-              │  │ Data   │  │ Connection │  │
-              │  │ Store  │  │ Pool       │  │
-              │  └────────┘  └────────────┘  │
-              └──────────────────────────────┘
+                                    ┌────────────────────────────────┐
+                                    │          User (Browser)        │
+                                    └──────────────┬─────────────────┘
+                                                   │ HTTPS
+                                                   ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Next.js 15 App Router                          │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │ app/   (routing / composition ONLY — no business logic)        │  │
+│  │  (marketing)/      public landing, no chrome                    │  │
+│  │  (auth)/           login · register · forgot/reset-password     │  │
+│  │                    verify-email                                 │  │
+│  │  (dashboard)/      AppShell (sidebar + header + footer)         │  │
+│  │    dashboard/      13 module pages + home, nested under root    │  │
+│  │  design-system/     design token showcase                       │  │
+│  │  api/auth/[...all]  Better Auth handler                         │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │ components/   shared UI (never domain logic)                   │  │
+│  │   ui/        shadcn primitives (button, dialog, input...)      │  │
+│  │   layout/    AppShell, Sidebar, Header, Breadcrumb, Container  │  │
+│  │   shared/    Card, EmptyState, StatsCard, CommandPalette...    │  │
+│  │   landing/   marketing-page sections                           │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │ modules/   isolated feature modules (clean architecture)       │  │
+│  │   tasks habits journal notes projects goals calendar            │  │
+│  │   expenses activity   (each: types/ + datasource/ + services/) │  │
+│  │   dashboard            (aggregator + widgets + constants)      │  │
+│  │   auth                 (forms + validation)                    │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │ lib/          shared infrastructure, no domain logic           │  │
+│  │   config/     env · database · auth                            │  │
+│  │   auth/       Better Auth server/client/session                │  │
+│  │   db/         Drizzle client · schema barrel · migrations       │  │
+│  │   result.ts   ServiceResult<T>                                 │  │
+│  │   mock-data.ts · format-date.ts · utils.ts                     │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│  config/ providers/ stores/ types/   (site, nav, layout, tokens;   │
+│                                     AppProviders; Zustand; types)  │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Router Cache / Server Actions                    │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ SQL (Drizzle ORM)
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    PostgreSQL (serverless, planned)                  │
+│              user-scoped rows · UUID PKs · camel/snake rules         │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -114,78 +83,106 @@ User lands on /dashboard
          ▼
   Server Component renders layout (no client JS required)
          │
-         ├── Static content? → HTML on server (0 client JS)
+         ├── Static content?        → HTML on server (0 client JS)
          │
-         ├── Need interactivity? → Marked 'use client'
-         │   (Client component loads minimal JS)
+         ├── Need interactivity?    → Marked 'use client'
+         │                            (minimized client JS)
          │
-         └── Complex client state?
-             Use TanStack Query for async, useState for local
+         └── Complex async state?   → TanStack Query (server-safe factory)
 ```
 
-**Server Components by default.** Only `'use client'` when browser interactivity is required.
+**Server Components by default.** Opt into `'use client'` only where a browser primitive is required.
 
 ### Component Hierarchy
 
 ```
 <RootLayout>
 │
-├── <AuthProvider>              # Better Auth session context
-│   └── <QueryClientProvider>   # TanStack Query
-│       └── <ThemeProvider>     # Light/dark theme
-│           └── <LayoutShell>   # Sidebar + Content
-│               │
-│               ├── <Sidebar>
-│               │   ├── UserProfile
-│               │   ├── Navigation
-│               │   └── QuickActions
-│               │
-│               └── <MainContent>
-│                   ├── <Header>
-│                   │   ├── Breadcrumb
-│                   │   ├── Search
-│                   │   └── Notifications
-│                   │
-│                   └── <PageContent>   # Module-specific
-│                       ├── Server Component (data fetch)
-│                       ├── Client Component (interactivity)
-│                       └── Loading / Error / Empty states
+├── <AppProviders>          # composition root: Theme + Query + Sonner
+│   │
+│   └── <RouteGroup>
+│       ├── (marketing) → landing sections
+│       ├── (auth)     → centered auth pages
+│       └── (dashboard) → <AppShell>      # sidebar + header + footer
+│             ├── <Sidebar>               # reads src/config/navigation.ts
+│             ├── <Header>                # Breadcrumb + theme + user menu
+│             └── <dashboard/...>         # module pages
+│                    └── <Dashboard>      # thin composition layer (Phase 5)
 ```
 
-### Route Architecture
+### Route Architecture — Current
 
 ```
 app/
-├── layout.tsx                    # Root layout (providers)
-├── page.tsx                      # Landing → redirects to /dashboard
+├── layout.tsx                    # root layout (providers)
+├── error.tsx · global-error.tsx · loading.tsx · not-found.tsx
+├── middleware.ts                 # auth / route protection
 │
-├── (auth)/                       # Unauthenticated route group
-│   ├── layout.tsx                # Auth layout (minimal, centered)
-│   ├── login/page.tsx            # Login form
-│   ├── register/page.tsx         # Registration form
-│   ├── forgot-password/page.tsx  # Password reset request
-│   └── reset-password/page.tsx   # Reset password with token
+├── (marketing)/
+│   ├── layout.tsx                # public, no chrome
+│   └── page.tsx                  # landing page
 │
-├── (dashboard)/                      # Authenticated route group
-│   ├── layout.tsx                    # Dashboard layout (sidebar + header)
-│   ├── dashboard/page.tsx            # Main dashboard
-│   │   ├── tasks/page.tsx            # Task list
-│   │   ├── habits/page.tsx           # Habit tracker
-│   │   ├── journal/page.tsx          # Daily journal
-│   │   ├── notes/page.tsx            # Notes
-│   │   ├── projects/page.tsx         # Project manager
-│   │   ├── goals/page.tsx            # Goal tracker
-│   │   ├── calendar/page.tsx         # Calendar view
-│   │   ├── interviews/page.tsx       # Interview tracker
-│   │   ├── expenses/page.tsx         # Expense tracking
-│   │   ├── resume/page.tsx           # Resume manager
-│   │   ├── analytics/page.tsx        # Analytics dashboard
-│   │   └── settings/page.tsx         # User settings
+├── (auth)/
+│   ├── layout.tsx                # minimal, centered
+│   ├── login/ · register/
+│   ├── forgot-password/ · reset-password/
+│   └── verify-email/
 │
-└── api/                          # Route handlers for external APIs
-    ├── webhooks/                 # External webhook endpoints
-    └── health/route.ts           # Health check endpoint
+├── (dashboard)/                  # authenticated area
+│   ├── layout.tsx                # AppShell
+│   └── dashboard/                # module home root
+│       ├── page.tsx              # dashboard (composition only)
+│       ├── tasks/ habits/ journal/ notes/ projects/ goals/
+│       ├── calendar/ expenses/ interviews/ skills/ analytics/
+│       └── resume/ settings/
+│
+├── design-system/                # design token showcase
+│
+└── api/
+    └── auth/[...all]/route.ts    # Better Auth HTTP handler
 ```
+
+> **Change from Phase 0:** module pages are nested at `(dashboard)/dashboard/<module>/`, not top-level `(dashboard)/<module>/`. API surface is limited to the single Better Auth handler.
+
+---
+
+## Dashboard Architecture (Phase 5)
+
+The dashboard is an explicit **composition layer**, never a business-logic owner.
+
+```
+src/app/(dashboard)/dashboard/page.tsx      (≈58 lines, pure composition)
+        │
+        ▼
+getDashboardSnapshot()                      dashboard-service.ts
+        │
+        ▼
+  SnapshotContributor[]  ── Promise.all ──▶ DashboardSnapshot
+        │        (one failed service never breaks the others)
+        ▼
+  WidgetState slices:  tasks  habits  projects  goals  journal
+                       notes  calendar  expenses  activity
+                       + computed  welcome · stats
+        │
+        ▼
+  11 presentational widgets (shared UI only, zero business logic)
+```
+
+Two registries, joined on `WidgetKey`:
+
+- **Data:** `SnapshotContributor[]`
+- **UI:** `DashboardWidgetDefinition[]`
+
+Layer ownership:
+
+```
+DataSources  →  own data (mock today; swappable to Drizzle in Phase 6)
+Services     →  own logic (filter/count/sort/slice)
+Aggregator   →  compose + join + compute welcome/stats
+Widgets      →  render their exact slice
+```
+
+Dependencies point inward (Clean Architecture). The dashboard never imports mock data directly and never runs business logic.
 
 ---
 
@@ -198,130 +195,40 @@ app/
   ───────                  ────────────────              ────────
 
   ┌─────────┐    HTTP     ┌──────────────┐   SQL    ┌──────────┐
-  │ React   │◄──────────►│ Route Handler │◄───────►│ PostgreSQL│
-  │ Component│  (JSON)    │   or Action   │          │   Neon   │
-  └─────────┘             └──────────────┘          └──────────┘
-      │                          │
-      │                 There are 2 paths to
-      │                 update database:
+  │ React   │◄──────────►│ Server Action │◄───────►│ PostgreSQL│
+  │ Component│  (JSON)    │   (or handler)│   Drizzle└──────────┘
+  └─────────┘             └──────────────┘
       │
-      │     Path 1: Server Actions (preferred for mutations)
-      │     ┌──────────────────────────────┐
-      │     │ Server Action validates with  │
-      │     │ Zod, calls Drizzle, and       │
-      │     │ returns ISR or revalidated    │
-      │     │ cache tag                     │
-      │     └──────────────────────────────┘
-      │                          │
-      │     Path 2: Route Handlers (webhooks, third-party APIs)
-      │     ┌──────────────────────────────┐
-      │     │ REST API endpoint (GET/PATCH/ │
-      │     │ POST) with SameSecurity      │
-      │     │ model as server action       │
-      │     └──────────────────────────────┘
+      │  Two mutation paths:
+      │
+      │  Path 1: Server Actions (preferred for mutations)
+      │    validate with Zod → Drizzle → revalidatePath/tag
+      │
+      │  Path 2: Route Handlers (external integrations, webhooks)
+      │    same auth + validation model as a server action
 ```
 
-### Server Actions Pattern
+### Service Layer Contract (Phase 5)
+
+Every module service returns the same discriminated union — no helpers, no classes, no throwing:
 
 ```typescript
-// modules/tasks/actions.ts
-
-'use server'  // This only runs on the server
-
-import { auth } from '@/lib/auth/server'
-import { db } from '@/lib/db/client'
-import { tasks } from '@/lib/db/schema/tasks'
-import { createTaskSchema } from './validation'
-
-export async function createTask(input: unknown): Promise<{
-  data?: Task
-  error?: string
-}> {
-  // 1. Auth check (session exists)
-  const session = await auth.getSession()
-  if (!session) return { error: 'Unauthorized' }
-
-  // 2. Validate input with Zod
-  const parsed = createTaskSchema.safeParse(input)
-  if (!parsed.success) return { error: parsed.error.message }
-
-  // 3. Business logic
-  const task = await db.insert(tasks).values({
-    ...parsed.data,
-    userId: session.user.id,
-  }).returning()
-
-  // 4. Evict cache so UI refreshes
-  revalidatePath('/tasks')
-
-  return { data: task[0] }
-}
+// src/lib/result.ts
+type ServiceResult<T> =
+  | { success: true;  data: T }
+  | { success: false; message: string }
 ```
 
-### Cache Architecture
+A module exposes its widget slice through a typed service:
 
-```
-Cache Layer                          Invalidation Triggers
-────────────                         ─────────────────────
-
-Next.js Full Route Cache (CDN)  │
-  Static pages: fully cached     │  revalidate: 3600 or redeploy
-  ISR pages: period re-gen       │  revalidate: 3600 or on-demand
-
-Data Cache (fetch)               │  revalidateTag('tasks')
-  Server-side cached fetches     │  revalidatePath('/tasks')
-
-Router Cache (Client-side)       │  Invalidation by Next Router
-  Client-side component cache    │  (automatic)
-
-TanStack Query Cache
-  Stale-while-revalidate         │  mutation side effects
-  Garbage collection             │  onMutate/onSettled
+```typescript
+// src/modules/tasks/services/task-service.ts (shape)
+async function getTaskWidgetData(
+  ds?: TaskDataSource                  // optional DI, default mock
+): Promise<ServiceResult<TaskWidgetData>>
 ```
 
----
-
-## Authentication Architecture
-
-### Auth Flow
-
-```
-                    User
-                     │
-                     ▼
-            ┌─────────────────┐
-            │  Login / Register │
-            │  (credentials or │
-            │   OAuth)          │
-            └────────┬────────┘
-                     │
-                     ▼
-            ┌─────────────────┐
-            │  Better Auth     │
-            │  Server          │
-            │  │- Validate     │
-            │  │- Create Session│
-            │  │- Set Cookie   │
-            └────────┬────────┘
-                     │
-                     ▼
-            ┌─────────────────┐
-            │  Auth Middleware  │
-            │  (next.config)   │
-            │  │               │
-            │  Route protection│
-            │  │  (auth) →     │
-            │  │  password login│
-            │  │  (dashboard)→ │
-            │  │  authenticated │
-            └────────┬────────┘
-                     │
-            ┌────────▼─────────┐
-            │  Server/Client    │
-            │  auth.getSession()│
-            │  useSession()     │
-            └──────────────────┘
-```
+The dashboard aggregates these via `getDashboardSnapshot()`, mapping each `ServiceResult` to an independent `WidgetState<T>` slot — a failed slice shows its own error without taking down the page.
 
 ---
 
@@ -329,192 +236,104 @@ TanStack Query Cache
 
 ### Interface Contract
 
-Every module exposes the same interface:
-
-```typescript
-// Every module provides:
-// {
-//   actions: {...}      // Server actions
-//   types: {...}        // TypeScript types for public data
-//   components: {...}  // React components
-//   validation: {...}  // Zod schemas
-// }
-```
-
-### Module Communication
-
-Modules do NOT import from each other. Instead:
+A data-backed module owns five things: **types, data-access, business logic, validation, UI**.
 
 ```
-Module A: tasks                  Module B: calendar
-────────────────                 ─────────────────
+src/modules/<name>/
+├── types.ts          # domain + widget-slice types
+├── datasource/       # interface + mock impl + factory + toDomain()
+├── services/         # ServiceResult-returning business logic
+├── actions.ts        # Server Actions            (+ in module phase)
+├── validation.ts     # Zod schemas               (+ in module phase)
+├── components/       # module UI                 (scaffold → module phase)
+└── hooks/            # module hooks              (scaffold → module phase)
+```
 
-tasks/actions.ts                 calendar/actions.ts
-  │                                    │
-  ├── Uses src/lib/db     ── same schema──► Uses src/lib/db
-  ├── Uses src/components ── same shared UI ─► Uses src/components
-  └── Uses validation     ── shared schemas ──► Uses validation
+### Boundary Rules (unchanged, evergreen)
 
+Modules **MAY** import `lib/*`, `components/*`, `hooks/*`, `types/*`, `constants/*`, `validation/*`.
 
-If a task needs to appear on the calendar:
+Modules **MUST NOT** import another module, access another module's tables, or hold business logic in `app/`.
+
+Cross-module needs travel through **shared DB schema**, never through imports:
+
+```
+tasks needs calendar visibility:
   ✅ Calendar reads `tasks` table via shared DB schema
-  ❌ Calendar does NOT import `src/modules/tasks/actions.ts`
+  ❌ Calendar imports `src/modules/tasks/actions.ts`
 ```
+
+### Current Module Inventory
+
+- **Implemented (Phase 5):** dashboard, activity, tasks, habits, journal, notes, projects, goals, calendar, expenses (each with `types` + `datasource` + `services`).
+- **Partial (Phase 3):** auth (forms + validation; no service layer).
+- **Shells (future):** analytics, interviews, resume, settings, notifications.
 
 ---
 
-## Database Architecture
-
-See `docs/DATABASE.md` for schema details. Architecture principles:
-
-- PostgreSQL (Neon Serverless) — handles migrations, indexes, relations
-- Drizzle ORM — type-safe queries, SQL-like API
-- Migrations — source-controlled `.sql` files, never manually applied
-- Connection: `@neondatabase/serverless` — edge-compatible driver
-
----
-
-## State Management Architecture
+## State Management
 
 ```
-State Strategy Pyramid
-
     ┌────────────────┐
-    │ URL            │  ← Router state (params, query params)
-    │                │    Preferred for filters and view state
+    │ URL            │  ← router state (filters, view params)
     └────────────────┘
          │
     ┌────────────────┐
-    │ Server         │  ← Data fetched from DB via
-    │ Cache          │    Server component or TanStack Query
-    │                │    (tasks, habits, notes, etc.)
+    │ Server / Query │  ← server components + TanStack Query
+    │ Cache          │    (server-safe QueryClient factory)
     └────────────────┘
          │
     ┌────────────────┐
-    │ Local State    │  ← useState, useReducer
-    │                │    Modal open/close, form drafts
+    │ Local State    │  ← useState / useReducer (modals, form drafts)
     └────────────────┘
          │
     ┌────────────────┐
-    │ Global State   │  ← Zustand (escape hatch)
-    │                │    Cross-tree UI state NOT from server
+    │ Global State   │  ← Zustand (UI-only: sidebar store, ADR-009)
     └────────────────┘
 ```
 
----
-
-## AI Architecture (Future)
-
-```
-          User Prompt
-               │
-               ▼
-  ┌────────────────────────────┐
-  │   AI Abstraction Layer     │
-  │   src/lib/ai/providers/    │
-  │                            │
-  │  Provider interface:        │
-  │  streamText(                │
-  │    model: string,           │
-  │    messages: Message[],     │
-  │    tools: Tool[]            │
-  │  )                         │
-  │                            │
-  │  ┌──────┐ ┌──────┐ ┌───┐ │
-  │  │Nim   │ │Ollama│ │OR │ │
-  │  │(NV)  │ │(loc) │ │(*)│ │
-  │  └──────┘ └──────┘ └───┘ │
-  └────────────────────────────┘
-               │
-               ▼
-  AI Enhancement Layer (NEVER required)
-  - optional chat assistant
-  - auto-tagging (auto-tag journal)
-  - text extraction (extract receipt line-items)
-  - suggestions (could also be client-side API)
-```
-
-**Crucial:** AI must NEVER be a dependency. The core app functions completely without AI. The AI layer sits on top — removable, swappable.
-
----
-
-## Deployment Architecture
-
-```
-git push
-    │
-    ▼
-┌─────────────┐
-│  GitHub Repo │
-└──────┬──────┘
-       │
-       ▼  (automatic via Vercel Integration)
-┌────────────────────────────┐
-│  Vercel Build Pipeline     │
-│  ├── Install (pnpm install)│
-│  ├── Lint (eslint)         │
-│  ├── Build (next build)    │
-│  ├── Migrate (drizzle)     │
-│  └── Deploy to Edge        │
-└────────────┬──────────────┘
-             │
-             ▼
-┌────────────────────────┐
-│  Production URL        │
-│  (lifeos.vercel.app)   │
-└────────────────────────┘
-       │
-       ├── Preview deployments (per branch)
-       ├── Production deployments (main branch)
-       └── Custom domain (lifeos.app, later)
-```
+Zustand is reserved for cross-tree UI state (sidebar collapse); server data stays in the Query cache.
 
 ---
 
 ## Security Architecture
 
 ```
-Layer 1: Transport    ─── HTTPS, Content-Security-Policy, CORS
-Layer 2: Auth         ─── Better Auth sessions, HTTP-only cookies
-Layer 3: Data         ─── Input validation (Zod), parameterized SQL (Drizzle)
-Layer 4: App          ─── Row-Level Security (user_id filter on all queries)
-Layer 5: Infrastructure─── Vercel/Neon isolation, encrypted connections
+Layer 1: Transport        HTTPS · CSP · CORS
+Layer 2: Auth             Better Auth sessions, HTTP-only cookies
+Layer 3: Data             Input validation (Zod), parameterized SQL (Drizzle)
+Layer 4: App              User-scoped queries (userId filter at the datasource)
+Layer 5: Infrastructure   PG isolation, encrypted connections
 ```
 
-Every database query filters by `userId` — users can only see their own data. This is the most important security layer.
-
----
-
-## Future Platform Expansion
-
-### Mobile App (Future)
-```
-Web Native (PWA) ─── bundle from Next.js
-                    ─── capacitor / Tauri Mobile (eventually)
-```
-
-### Browser Extension (Future)
-```
-Chrome Extension ─── communicates with LifeOS API
-                   ─── API route handlers extending the server
-                   ─── OAuth authentication
-```
-
-### Desktop App (Future)
-```
-Tauri desktop ─── wraps web frontend
-               ─── native clipboard, filesystem access
-               ─── same API backend
-```
-
-### Plugin / Integration System (Future)
-```
-Plugin API
-  ├── Webhook (outgoing for events)
-  ├── Incoming API (receive hooks from external services)
-  └── Extension points (future possibilities)
-```
+Every data-access path is user-scoped at the datasource boundary — the most important security rule and a Phase 6 invariant.
 
 ---
 
-*Last updated: 2026-07-29 — LifeOS Phase 0*
+## Current Implementation vs. Phase 0 Blueprint
+
+| Area | As originally planned | Implemented / current |
+|------|----------------------|----------------------|
+| Routing | module pages @ `(dashboard)/<m>/` | nested @ `(dashboard)/dashboard/<m>/` |
+| API routes | webhooks / health planned | single Better Auth handler |
+| Module shape | actions/types/validation/components/hooks | + `datasource` + `services` (Phase 5) |
+| Mock data | inline in pages | isolated behind datasource interfaces |
+| Server actions | ADR placeholder | pattern established (Phase 3) |
+| AI / Email / Storage | planned | scaffolds only (later phases) |
+
+---
+
+## Phase 6+ Direction
+
+- Replace mock `datasource/` implementations with Drizzle-backed ones — **zero service/widget changes** (the entire point of the Phase 5 contract).
+- Add `actions.ts` + `validation.ts` per module; enforce `userId` scoping in every query.
+- Build the persistent `tasks` module first, then the remaining data modules.
+- Optionally consolidate `db/schema.ts` (barrel) vs `db/schema/` (directory) into one layout.
+
+---
+
+> **Maintained by:** Rupesh Yadav
+> **Project:** LifeOS
+>
+> **Current Release:** **v0.5.0-alpha**
+> **Status:** Phase 5 complete • Dashboard Foundation & Widget Architecture shipped

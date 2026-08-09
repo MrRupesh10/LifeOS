@@ -63,6 +63,68 @@ src/modules/<name>/
 
 ---
 
+## Current Architecture
+
+LifeOS currently consists of:
+
+- Marketing Website
+- Authentication System
+- Dashboard Shell
+- Database Foundation
+- Shared UI Library
+- Design System
+- Navigation System
+- Module Framework
+
+Business modules (Tasks, Habits, Journal, Notes, Projects...)
+exist as shells only.
+
+## Dashboard Philosophy
+
+The dashboard NEVER owns business logic.
+
+The dashboard is only responsible for composing widgets.
+
+Each widget belongs to its own module.
+
+Examples:
+
+TasksWidget
+→ modules/tasks
+
+HabitsWidget
+→ modules/habits
+
+JournalWidget
+→ modules/journal
+
+UpcomingEventsWidget
+→ modules/calendar
+
+RecentActivityWidget
+→ modules/activity
+
+Dashboard imports widgets.
+
+Widgets import their own queries.
+
+Dashboard never directly queries the database.
+
+## Data Ownership
+
+Every feature owns:
+
+- schema
+- server actions
+- queries
+- validation
+- components
+- widgets
+
+No module accesses another module's tables directly.
+
+Shared data only travels through public interfaces.
+
 ## Coding Standards
 
 ### TypeScript
@@ -141,6 +203,23 @@ src/modules/<name>/
 - **Always** record technical decisions in `.claude/DECISIONS.md`
 - **Always** update CHANGELOG.md for every meaningful change
 - Documentation is a first-class citizen, not an afterthought
+After every completed phase:
+
+1. PROJECT_STATUS.md
+
+2. CHANGELOG.md
+
+3. README.md
+
+4. CLAUDE.md
+
+5. Git Tag
+
+6. GitHub Release
+
+7. Verify Build
+
+8. Push
 
 ---
 
@@ -186,13 +265,23 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 - Engineering handbook: `docs/Engineering-Handbook.md`
 - Project landscape: `docs/Roadmap.md`
 - Tooling decisions: `docs/engineering/tooling.md`
+- Project progress: `docs/PROJECT_STATUS.md`
 
 ---
 
-- **Version:** 0.3.0-alpha
-- **Current Phase:** Phase 3 and  4 — Database Foundation
-- **Completed Phases:** Phase 0, Phase 1, Phase 2, Phase 3, Phase 4
-- **Project Status:** Phase 5 (Dashboard) is the next planned milestone.
+Version: 0.5.0-alpha
+
+Current Phase:
+Phase 6 — Business Schemas / Drizzle (Up Next)
+
+Completed Phases
+✓ Phase 0
+✓ Phase 1
+✓ Phase 2
+✓ Phase 3
+✓ Phase 4
+✓ Phase 5
+- **Project Status:** Phase 5 — Dashboard Foundation & Widget Architecture (complete, 8/8 milestones). Ready for Phase 6.
 
 ## Current Implementation State
 
@@ -254,7 +343,34 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 ## Phase 3 (Authentication) and 4 (Database Foundation) are fully implemented, verified, and production‑ready.
 
 - **All verification gates:** TypeScript ✅, ESLint ✅, Prettier ✅, Build ✅, Auth flow ✅, DB access ✅, Security ✅.
-- **Documentation:** PROJECT_STATUS, CHANGELOG, and README updated to reflect the new release.
+
+
+
+## Phase 5 — Dashboard Foundation & Widget Architecture (Complete)
+
+**Status:** 8/8 milestones complete (verified 2026-08-06). All gates green.
+
+**Goal:** Preserve the visual dashboard; replace the monolithic 333-line page with a pure composition layer over a real widget architecture.
+
+**Milestones (M1 → M8):**
+- **M1 — ServiceResult + Module Types:** `ServiceResult<T>` (discriminated union, no helpers) + typed module contracts across 9 modules + dashboard (11 `types.ts` files + `src/lib/result.ts`).
+- **M2 — DataSources:** interface + mock impl + `createXxxDataSource()` factory + `toDomain()` adapter. Nine `datasource/` files. The ONLY place mock data is imported — swappable to Drizzle in Phase 6 with zero service/widget changes.
+- **M3 — Module Services:** plain `async` functions returning `ServiceResult<XxxWidgetData>`; filter/sort/count/slice logic lives here, never in the UI. Nine `services/` files.
+- **M4 — Dashboard Aggregator:** `getDashboardSnapshot()` iterates `SnapshotContributor[]` via `Promise.all` — one failed service never breaks the other eight.
+- **M5 — Dashboard Constants:** `WIDGET_DEFINITIONS`, `WIDGET_ICONS`, `QUICK_ACTION_ICON`, `DASHBOARD_GRID` in `modules/dashboard/constants.ts`.
+- **M6 — Dashboard Widgets:** 11 pure-presentational widgets (WelcomeHeader, StatsRow, 9 data-backed) — zero business logic; shared UI components only.
+- **M7 — Dashboard Page Refactor:** dashboard page rewritten 333 → ~58 lines (pure composition). Added computed `welcome`/`stats` slices inside the aggregator.
+- **M8 — Build & Verify:** typecheck ✅, lint ✅, build ✅ (24 routes, `/dashboard` prerendered static).
+
+**Key ADRs (D1–D14):** Widget data slices are independent · `WidgetState<T>` discriminated union (no impossible states) · two registries (data `SnapshotContributor[]` + UI `DashboardWidgetDefinition[]`) joined on `WidgetKey` · explicit `DashboardSnapshot` interface · one documented `as` cast in the build loop (D14).
+
+**Architecture pattern:** Dashboard never imports mock data and never runs business logic. DataSources own data, Services own logic, Aggregator composes, Widgets render. The dependency arrow always points inward (Clean Architecture).
+
+**Full milestone detail + ADRs:** `.claude/plans/phase5-dashboard.md`.
+
+
+
+Documentation must always be updated before tagging a release.
 ---
 
-*Last updated: 2026-08-03 — LifeOS Phase 4 Complete*
+*Last updated: 2026-08-08 — LifeOS Phase 5 Complete*

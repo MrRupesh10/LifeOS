@@ -1,207 +1,481 @@
-# LifeOS
+# 🚀 LifeOS
 
-> Your personal operating system. Not a todo app. Not a habit tracker. An operating system for your life.
+> **Your Personal Operating System**
+>
+> Not a todo app. Not a habit tracker. An operating system for your life.
 
-LifeOS combines tasks, habits, journaling, notes, projects, goals, calendar, expense tracking, interview management, and resume management into one unified experience — like Notion, Todoist, and a habit tracker had a love child, but with a single, coherent design language.
+LifeOS is a modern full-stack productivity platform that unifies **tasks, habits, journaling, notes, projects, goals, calendar, expenses, interview preparation, and resume management** into a single cohesive experience.
+
+Instead of managing your life across multiple disconnected apps, LifeOS provides one integrated workspace with a consistent design language, centralized data model, and scalable architecture.
 
 ---
 
-## Why LifeOS Exists
-
+# ✨Why LifeOS Exists
 Most productivity tools do one thing well: Todoist for tasks, Notion for notes, separate expense apps — which means your data is scattered across 8 tabs and none of them talk to each other.
 
-- Your tasks don't know about your habits
-- Your journal doesn't know your goals
-- Your expenses don't show up on your calendar
-
-LifeOS fixes that. It's **one app, one experience, one data model**, where everything connects.
-
----
-
-## Core Principles
-
-| Principle | Meaning |
-|-----------|--------|
-| **Unified** | Every module shares the same design language, navigation, and data model |
-| **Minimal** | Inspired by Apple, Linear, Notion — whitespace, calm, professional |
-| **Fast** | Server components, streaming, instant navigation, zero unnecessary JavaScript |
-| **Private** | All your data is yours. No analytics, no tracking, no third-party sale |
-| **Offline-capable** | (Future) Works even without internet |
-| **Platform-native** | Web, then mobile, then desktop. One codebase, many targets |
+Your tasks don't know about your habits
+Your journal doesn't know your goals
+Your expenses don't show up on your calendar
+LifeOS fixes that. It's one app, one experience, one data model, where everything connects.
 
 ---
 
-## Tech Stack (Active)
+# 📌 Current Status
 
-| Layer | Technology | Key Detail |
-|-------|-----------|-----------|
-| **Framework** | Next.js 15.5 | App Router, route groups, Server Components |
-| **Styling** | Tailwind CSS v4 | CSS-based `@theme inline`, NO `tailwind.config.ts` |
-| **UI Primitives** | shadcn/ui v2 + `@base-ui/react` | New York base-nova, neutral colors |
-| **Fonts** | Geist Sans + Geist Mono | `next/font/google` with CSS variables |
-| **Icons** | Lucide React | 1,200+ icons, tree-shaken |
-| **Theme** | next-themes | Class strategy, system-default, flash-free |
-| **Auth** | Better Auth (Phase 3) | ✅ Complete |
-| **Database** | PostgreSQL + Drizzle ORM (Phase 4) | ✅ Complete |
-| **Validation** | Zod 4 | Shared client + server schemas |
-| **State** | Zustand (sidebar), TanStack Query (server cache) | ADR-009, ADR-014 |
-| **Notifications** | Sonner | Global `<Toaster>` mounted |
-| **Forms** | React Hook Form + @hookform/resolvers | For all user input |
-| **Package Manager** | pnpm 11 | `pnpm-workspace.yaml` with `allowBuilds` |
-| **CI/CD** | Vercel (future) | GitHub integration |
-| **Lint/Format** | ESLint 9 + Prettier 3 | Pre-commit via Husky + lint-staged |
-| **Env** | @t3-oss/env-nextjs | Zod-powered, fail-fast |
+| Version | Status |
+|----------|--------|
+| **v0.5.0-alpha** | ✅ Current Release |
+| Phase 0 | ✅ Complete |
+| Phase 1 | ✅ Complete |
+| Phase 2 | ✅ Complete |
+| Phase 3 | ✅ Complete |
+| Phase 4 | ✅ Complete |
+| Phase 5 | ✅ Complete |
+| Phase 6 | 🚧 Next |
 
 ---
 
-## Quick Start
+# 🏗️ Tech Stack
+
+| Layer | Technology |
+|--------|------------|
+| Framework | Next.js 15.5 |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 |
+| UI | shadcn/ui + Base UI |
+| Icons | Lucide React |
+| Theme | next-themes |
+| Authentication | Better Auth |
+| Database | PostgreSQL |
+| ORM | Drizzle ORM |
+| Validation | Zod |
+| Forms | React Hook Form |
+| State | Zustand |
+| Server Cache | TanStack Query |
+| Notifications | Sonner |
+| Package Manager | pnpm |
+| Deployment | Vercel (planned) |
+
+---
+
+# ✨ Current Features
+
+## ✅ Authentication
+
+- Email & Password Authentication
+- User Registration
+- Login
+- Logout
+- Forgot Password
+- Reset Password
+- Email Verification
+- Session Management
+- Protected Routes
+- Middleware Authentication
+- Google OAuth
+- GitHub OAuth
+- Server-side Session Helper
+
+---
+
+## ✅ Database
+
+- PostgreSQL
+- Drizzle ORM
+- Type-safe Queries
+- Database Migrations
+- Authentication Schema
+- UUID Primary Keys
+- Timestamp Columns
+- Row-level User Isolation
+- Mock Seed Data
+- Shared Database Client
+
+---
+
+## ✅ Dashboard Architecture
+
+- `ServiceResult<T>` contract (discriminated union — no helpers, no throwing)
+- Typed module contracts for 9 modules + dashboard
+- Per-module DataSources (interface + mock impl + factory) — sole access point to mock data
+- `toDomain()` adapter isolates mock shapes behind the datasource interface
+- Module Services returning `ServiceResult<XxxWidgetData>` (filter/sort/count/slice)
+- `getDashboardSnapshot()` aggregator composes `SnapshotContributor[]` via `Promise.all`
+- Two registries — data `SnapshotContributor[]` + UI `DashboardWidgetDefinition[]` — joined on `WidgetKey`
+- `WidgetState<T>` discriminated union (loading / success / error)
+- 11 pure-presentational widgets, each fed exactly its own data slice
+- Dashboard page: pure composition layer (333 → ~58 lines), zero business logic
+
+---
+
+## ✅ UI & Design
+
+- Premium Landing Page
+- Responsive Dashboard
+- Apple / Linear Inspired Design
+- Dark / Light Theme
+- Design System Showcase
+- Accessible Components
+- Command Palette
+- Animated UI
+- Reusable Component Library
+
+---
+
+## ✅ Productivity Modules
+
+Current shell pages include:
+
+- Dashboard
+- Tasks
+- Habits
+- Journal
+- Notes
+- Projects
+- Goals
+- Calendar
+- Expenses
+- Interviews
+- Resume
+- Analytics
+- Settings
+
+---
+
+# 📁 Project Structure
+
+```
+src
+├── app                    # Routing only (no business logic) — Next.js App Router
+│   ├── (marketing)        Public landing page (no sidebar)
+│   ├── (dashboard)        Authenticated pages (AppShell with sidebar + header)
+│   ├── (auth)
+│   └── api
+│
+├── components
+│   ├── ui                 shadcn/ui primitives (Button, Dialog, DropdownMenu)
+│   ├── layout             App shell chrome (Sidebar, Header, AppShell, ThemeToggle)
+│   ├── landing
+│   └── shared             Cross-module components (CommandPalette)
+│
+├── modules                  Feature modules — isolated, independent, removable
+│   ├── auth
+│   ├── dashboard
+│   ├── tasks
+│   ├── habits
+│   ├── journal
+│   └── ...
+│
+├── lib
+│   ├── auth
+│   ├── db
+│   ├── config               Configuration (env validation, database, auth)
+│   └── utils                Pure utilities (cn helper)
+│
+├── providers                AppProviders composition root (Theme + Query + Sonner)
+├── stores                   Zustand stores (sidebar collapse)
+├── hooks                    Shared React hooks
+├── config                   Application configuration (site, navigation, layout)
+└── types                    Global TypeScript types
+```
+
+---
+
+# 🚀 Quick Start
 
 ```bash
 git clone https://github.com/MrRupesh10/LifeOS.git
+
 cd LifeOS
-cp .env.example .env.local    # Set DATABASE_URL
+
+cp .env.example .env.local
+
 pnpm install
+
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-### Available Scripts
-
-| Command | Purpose |
-|---------|---------|
-| `pnpm dev` | Start development server |
-| `pnpm build` | Production build |
-| `pnpm start` | Start production server |
-| `pnpm lint` | Run ESLint |
-| `pnpm format` | Format with Prettier |
-| `pnpm format:check` | Check formatting |
-| `pnpm typecheck` | TypeScript type checking |
-
-### Design System
-
-Visit `/design-system` to view the complete visual reference — colors, typography, spacing, shadows, buttons, dialogs, dropdowns, and icons — in both light and dark themes.
-
-### All Gates Passed
+Open
 
 ```
-TypeScript  pnpm typecheck   — ✅
-ESLint      pnpm lint        — ✅
-Prettier    pnpm format:check — ✅
-Build       pnpm build       — ✅
+http://localhost:3000
 ```
 
 ---
 
-## Project Structure
+# ⚙️ Environment Variables
 
-```
-src/
-├── app/                 # Routing only (no business logic) — Next.js App Router
-│   ├── layout.tsx       Root layout: fonts + AppProviders
-│   ├── (marketing)/     Public landing page (no sidebar)
-│   └── (dashboard)/     Authenticated pages (AppShell with sidebar + header)
-├── modules/              Feature modules — isolated, independent, removable
-├── components/
-│   ├── ui/             shadcn/ui primitives (Button, Dialog, DropdownMenu)
-│   ├── layout/         App shell chrome (Sidebar, Header, AppShell, ThemeToggle)
-│   └── shared/         Cross-module components (CommandPalette)
-├── lib/
-│   ├── config/         Configuration (env validation, database, auth)
-│   └── utils.ts        Pure utilities (cn helper)
-├── stores/ui/           Zustand stores (sidebar collapse)
-├── providers/           AppProviders composition root (Theme + Query + Sonner)
-├── config/              Application configuration (site, navigation, layout)
-├── types/              Global TypeScript types
-└── hooks/              Shared React hooks
+```env
+DATABASE_URL=
+
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+NEXT_PUBLIC_APP_URL=
+NEXT_PUBLIC_BETTER_AUTH_URL=
 ```
 
 ---
 
-## Navigation
+# 📜 Available Scripts
 
-14 modules are registered in the navigation structure:
+```bash
+pnpm dev
+```
 
-| Section | Modules |
-|---------|---------|
-| **Main** | Dashboard, Tasks, Habits, Journal, Notes |
-| **Planning** | Projects, Goals, Calendar |
-| **Career** | Interviews, Resume, Expenses |
-| **Review** | Analytics, Settings |
+Start development server
 
-All navigation lives in `src/config/navigation.ts` — the single source of truth.
+```bash
+pnpm build
+```
 
----
+Production build
 
-## Documentation
+```bash
+pnpm start
+```
 
-| Document | Covers |
-|----------|--------|
-| [`docs/Roadmap.md`](docs/Roadmap.md) | Development phases and milestones |
-| [`docs/Architecture.md`](docs/Architecture.md) | Full system architecture, diagrams, patterns |
-| [`docs/PRD.md`](docs/PRD.md) | Product Requirements Document (vision, users, success metrics) |
-| [`docs/Design-System.md`](docs/Design-System.md) | Visual design language (Apple/Linear/Notion) |
-| [`docs/Engineering-Handbook.md`](docs/Engineering-Handbook.md) | Code conventions, naming, component patterns |
-| [`docs/DATABASE.md`](docs/DATABASE.md) | Data models, schema, ER diagrams |
-| [`docs/API.md`](docs/API.md) | API design, Server Actions conventions |
-| [`docs/FEATURES.md`](docs/FEATURES.md) | Feature catalog (15 modules) |
-| [`docs/SECURITY.md`](docs/SECURITY.md) | Security model, auth flow |
-| [`docs/Definition-of-Done.md`](docs/Definition-of-Done.md) | Feature completion checklist |
-| [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) | Live: current sprint, what's next |
-| [`docs/CHANGELOG.md`](docs/CHANGELOG.md) | Version history (Keep a Changelog format) |
-| [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | Git flow, conventional commits, PR template |
-| [`docs/FOLDER_STRUCTURE.md`](docs/FOLDER_STRUCTURE.md) | Every directory, naming rules, module boundaries |
-| [`docs/DEPENDENCIES.md`](docs/DEPENDENCIES.md) | Every dependency, justification, alternatives |
-| [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Claude's permanent memory and technical context |
-| [`.claude/DECISIONS.md`](.claude/DECISIONS.md) | 14 Architectural Decision Records |
+Run production build
 
----
+```bash
+pnpm lint
+```
 
-## Current Status
+ESLint
 
-**Phase 2 complete — Design System & Layout Shell shipped.**
+```bash
+pnpm typecheck
+```
 
-| Milestone | Name | Status |
-|-----------|------|--------|
-| M1 | Next.js 15 scaffold | ✅ |
-| M2 | 30 dependencies installed | ✅ |
-| M3 | shadcn/ui v2 initialized | ✅ |
-| M4 | Tooling (ESLint, Prettier, Husky) | ✅ |
-| M5 | Environment validation | ✅ |
-| M6 | Production folder structure | ✅ |
-| M7 | Core config (fonts, theme, metadata) | ✅ |
-| M8 | Base pages (error, loading, 404) | ✅ |
-| M9 | Interactive shell (sidebar, theme, ⌘K) | ✅ |
-| M10 | Providers setup | ✅ |
-| M11 | Wire everything in root layout | ✅ |
-| M12 | Verify and test | ✅ All 4 gates green |
-| **M13** | **Apple/Linear design tokens** | ✅ |
-| **M14** | **Breadcrumb + Container components** | ✅ |
-| **M15** | **Design system showcase page** | ✅ |
-| **M16** | **Accessibility pass (skip-link, focus)** | ✅ |
-| **M17** | **Verify & document** | ✅ |
+TypeScript verification
 
-**4 routes in production build:** `/`, `/dashboard`, `/_not-found`, `/design-system`
+```bash
+pnpm format
+```
+
+Format code
+
+```bash
+pnpm format:check
+```
+
+Verify formatting
 
 ---
 
-## Author & Learning
+# ✅ Quality Gates
 
-Flagship portfolio project by **Rupesh** — Computer Science student building this as a personal daily tool and learning vehicle through production-grade engineering mentorship.
-
-### Learning Goals
-
-1. Master full-stack software engineering through real production work
-2. Build an outstanding portfolio project for interviews
-3. Learn production architecture patterns (module isolation, platform contracts)
-4. Create personal the owner uses every day
+| Gate | Status |
+|-------|--------|
+| TypeScript | ✅ |
+| ESLint | ✅ |
+| Prettier | ✅ |
+| Production Build | ✅ |
 
 ---
 
-## License
+# 🗺️ Roadmap
 
-MIT
+## ✅ Phase 0 — Documentation
+
+Completed
+
+- Engineering Documentation
+- Product Documentation
+- Architecture
+- API Documentation
+- Security Guide
+- Roadmap
+- Project Status
+- Folder Structure
+- Claude Memory
+- ADR Decisions
 
 ---
 
-*Last updated: 2026-07-30 — LifeOS Phase * Full Complete (14 milestones, 35+ files, all gates green)*
+## ✅ Phase 1 — Project Setup
+
+Completed
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- shadcn/ui
+- Husky
+- ESLint
+- Prettier
+- Environment Validation
+- App Router
+- Dashboard Shell
+- Providers
+- Theme
+- Navigation
+
+---
+
+## ✅ Phase 2 — Design System
+
+Completed
+
+- Apple / Linear Design
+- Premium Landing Page
+- Rich Dashboard
+- Component Library
+- Accessibility
+- Module Pages
+- Animations
+- Design System Showcase
+
+---
+
+## ✅ Phase 3 — Authentication
+
+Completed
+
+- Better Auth
+- Email Authentication
+- Google OAuth
+- GitHub OAuth
+- Login
+- Register
+- Forgot Password
+- Reset Password
+- Email Verification
+- Middleware Protection
+- Protected Dashboard
+- Session Management
+
+---
+
+## ✅ Phase 4 — Database Foundation
+
+Completed
+
+- PostgreSQL
+- Drizzle ORM
+- Database Client
+- Authentication Schema
+- Migrations
+- Query Helpers
+- User Isolation
+- Mock Seed Data
+- Type-safe Database Layer
+
+---
+
+## ✅ Phase 5 — Dashboard Foundation & Widget Architecture
+
+Completed
+
+- `ServiceResult<T>` Contract
+- Typed Module Contracts
+- DataSources (mock adapters)
+- Module Services
+- Dashboard Aggregator
+- Widget Registries & Constants
+- 11 Dashboard Widgets
+- Dashboard Page Refactor
+- Architecture Decisions (D1–D14)
+
+---
+
+## 🚧 Upcoming
+
+- Phase 6 — Task Management
+- Phase 7 — Habit Tracker
+- Phase 8 — Journal
+- Phase 9 — Notes
+- Phase 10 — Projects
+- Phase 11 — Goals
+- Phase 12 — Calendar
+- Phase 13 — Expenses
+- Phase 14 — Interview Tracker
+- Phase 15 — Resume Builder
+- Phase 16 — Analytics
+- Phase 17 — Settings
+- Phase 18 — Production + PWA
+
+---
+
+# 📚 Documentation
+
+```
+docs/
+│
+├── API.md
+├── Architecture.md
+├── CHANGELOG.md
+├── DATABASE.md
+├── Design-System.md
+├── FEATURES.md
+├── FOLDER_STRUCTURE.md
+├── PROJECT_STATUS.md
+├── Roadmap.md
+├── SECURITY.md
+└── ...
+```
+
+---
+
+# 🎯 Learning Goals
+
+This project is being built to master:
+
+- Production-grade Full Stack Development
+- System Design
+- Authentication
+- Database Design
+- Scalable Architecture
+- UI Engineering
+- Performance Optimization
+- Modern React Patterns
+- Next.js App Router
+- Production DevOps Workflow
+
+---
+
+# 📈 Development Progress
+
+| Phase | Progress |
+|---------|----------|
+| Documentation | ✅ 100% |
+| Project Setup | ✅ 100% |
+| Design System | ✅ 100% |
+| Authentication | ✅ 100% |
+| Database | ✅ 100% |
+| Dashboard | ✅ 100% |
+| Productivity Modules | 🚧 |
+| Production Ready | 🚧 |
+
+---
+
+# 👨‍💻 Author
+
+**Rupesh Yadav**
+
+Computer Science Engineering Student
+
+Building LifeOS as a flagship portfolio project to learn production-grade software engineering and modern full-stack architecture.
+
+GitHub: **https://github.com/MrRupesh10**
+
+---
+
+# 📄 License
+
+MIT License
+
+---
+
+> **Current Release:** **v0.5.0-alpha**
+>
+> **Last Updated:** 2026-08-08
+>
+> **Status:** Phase 5 Complete • Dashboard Foundation & Widget Architecture Shipped

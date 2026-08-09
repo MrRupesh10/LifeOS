@@ -1,0 +1,35 @@
+{
+  // ── TypeScript — use the workspace TS server (5.9.3), not a global/older one.
+  // Fixes red lines on `@/*` path-alias imports and newer syntax features.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifierEnding": "ts",
+
+  // ── ESLint 9 — this project uses a FLAT config (eslint.config.mjs), not a
+  // legacy `.eslintrc`. Older ESLint extensions default to eslintrc and fail
+  // silently, producing red lines the CLI doesn't show.
+  "eslint.useFlatConfig": true,
+  "eslint.validate": ["typescript", "typescriptreact"],
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // ── Prettier 3 + tailwind plugin — format on save using the project config.
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  // ── Tailwind v4 — the extension scans `@import "tailwindcss"` in globals.css.
+  "tailwindCSS.experimental.configFile": null,
+  "tailwindCSS.includeLanguages": { "typescriptreact": "html" },
+
+  // ── Misc — consistent line endings + trim trailing whitespace.
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  }
+}

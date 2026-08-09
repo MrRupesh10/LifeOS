@@ -1,179 +1,603 @@
 # Folder Structure — LifeOS
 
-> Every folder, its purpose, and what belongs there.
-> Created: 2026-07-30 — Phase 1
+Defines the actual LifeOS project structure, module boundaries, responsibilities, and architecture.
 
----
+Current status: Phase 5 complete
 
-## Top-Level Project Tree
+Last updated: 2026-08-08 — Phase 5
 
+## 1. Top-Level Project Structure
 ```
 LifeOS/
-├── src/                       # All application source code
-├── docs/                      # Engineering documentation (not user-facing)
-├── .claude/                   # Claude Code configuration (CLAUDE.md, DECISIONS.md)
-├── .husky/                    # Git hooks (pre-commit)
-├── public/                    # Static assets served at / (favicon, robots.txt)
-├── package.json               # Dependency manifest + scripts
-├── pnpm-lock.yaml             # Dependency lock file (pnpm)
-├── pnpm-workspace.yaml        # pnpm config (allowBuilds)
+├── src/                        # Application source code
+├── docs/                       # Engineering and project documentation
+├── .claude/                    # Claude Code project memory, rules, plans
+├── .github/                    # Issue templates & CI workflows (scaffold)
+├── .husky/                     # Git hooks
+├── tests/                      # e2e / integration / unit (scaffold)
+├── assets/ artifacts
+├── package.json                # Dependencies and scripts
+├── pnpm-lock.yaml              # pnpm lockfile
+├── pnpm-workspace.yaml         # pnpm workspace configuration
 ├── tsconfig.json               # TypeScript configuration
-├── next.config.ts              # Next.js framework configuration
-├── eslint.config.mjs           # ESLint 9 flat config
-├── postcss.config.mjs          # PostCSS + Tailwind v4
+├── next.config.ts              # Next.js configuration
+├── next-env.d.ts               # Next.js type reference
+├── drizzle.config.ts           # Drizzle Kit configuration
+├── eslint.config.mjs           # ESLint 9 flat configuration
+├── postcss.config.mjs          # PostCSS / Tailwind configuration
 ├── .prettierrc                 # Prettier configuration
-├── components.json             # shadcn/ui v2 configuration
+├── .prettierignore             # Prettier ignore rules
+├── .gitignore                  # Git ignore rules
+├── components.json             # shadcn/ui configuration
 ├── .env.example                # Environment variable documentation
 └── README.md                   # Project README
 ```
 
----
+`public/`, `mcp/`, `skills/` exist as empty or near-empty scaffolds and are omitted here until populated.
 
-## `src/` — Application Source
-
+## 2. src/ — Application Source
 ```
 src/
-├── app/                        # Next.js App Router (ROUTING ONLY — no business logic)
-│   ├── layout.tsx              # Root layout: fonts, providers, html shell
-│   ├── page.tsx                # Landing page (/) — Phase 1 placeholder
-│   ├── globals.css             # Tailwind v4 + shadcn CSS custom properties
-│   ├── (auth)/                 # Route group — public auth pages (unauthenticated)
-│   │   ├── login/              # Email/password + OAuth login
-│   │   └── register/           # Account creation form
-│   ├── (dashboard)/            # Route group — authenticated app pages
-│   │   ├── layout.tsx          # Dashboard shell (AppShell wrapper)
-│   │   ├── dashboard/          # Main dashboard (widgets, overview)
-│   │   │   ├── tasks/          # Task management
-│   │   │   ├── habits/         # Habit tracker
-│   │   │   ├── journal/        # Daily journal entries
-│   │   │   ├── notes/          # Notes with folders/tags
-│   │   │   ├── projects/       # Project management
-│   │   │   ├── goals/          # Goal tracking
-│   │   │   ├── calendar/       # Calendar views
-│   │   │   ├── interviews/     # Interview preparation
-│   │   │   ├── expenses/       # Expense tracking
-│   │   │   ├── resume/         # Resume builder
-│   │   │   ├── analytics/      # Data dashboards
-│   │   │   └── settings/       # User preferences
-│   └── api/                    # Route handlers (REST endpoints, webhooks)
-│
-├── modules/                    # Feature modules — isolated, independent
-│   ├── tasks/                  # Tasks domain (Phase 5)
-│   │   ├── actions.ts          #   Server Actions (createTask, deleteTask, etc.)
-│   │   ├── types.ts            #   Module-level types
-│   │   ├── validation.ts       #   Zod schemas for this module
-│   │   ├── components/          #   React components
-│   │   └── hooks/              #   React hooks
-│   ├── habits/                 # Habits domain (Phase 7)
-│   ├── journal/                # Journal domain (Phase 10)
-│   ├── notes/                  # Notes domain (Phase 8)
-│   ├── projects/               # Projects domain (Phase 6)
-│   ├── goals/                  # Goals domain (Phase 13)
-│   ├── calendar/               # Calendar domain (Phase 15)
-│   ├── interviews/             # Interview prep domain (Phase 16)
-│   ├── expenses/               # Expenses domain (Phase 14)
-│   ├── resume/                 # Resume builder domain (Phase 17)
-│   ├── analytics/              # Analytics domain (Phase 19)
-│   ├── auth/                   # Auth UI (Phase 3)
-│   ├── notifications/          # Notification UI (Phase 9)
-│   └── settings/               # Settings UI (Phase 20)
-│
-├── components/
-│   ├── ui/                     # shadcn/ui v2 primitives (Base UI, NOT Radix)
-│   │   ├── button.tsx          #   Button primitive
-│   │   ├── dialog.tsx          #   Dialog (Modal + Portal + Backdrop)
-│   │   └── dropdown-menu.tsx   #   Dropdown menu (Base UI Menu)
-│   ├── layout/                 # Application shell chrome
-│   │   ├── app-shell.tsx       #   Responsive shell (sidebar + header + main + footer)
-│   │   ├── sidebar.tsx         #   Collapsible sidebar (desktop) / mobile drawer
-│   │   ├── header.tsx          #   Top bar: hamburger, breadcrumb, search, theme
-│   │   ├── theme-toggle.tsx    #   Light/Dark/System shadcn DropdownMenu
-│   │   └── footer.tsx          #   Footer placeholder
-│   └── shared/                 # Cross-module reusable components
-│       └── command-palette.tsx  #   ⌘K global listener → Base UI Dialog placeholder
-│
-├── lib/                        # Shared infrastructure layer
-│   ├── config/                 # App configuration (single source of truth)
-│   │   ├── env.ts              #   Environment validation (Zod + t3-env)
-│   │   ├── database.ts         #   Database client config (Phase 4)
-│   │   └── auth.ts             #   Better Auth config (Phase 3)
-│   ├── db/                     # Database layer ⚠️ Phase 4 (placeholder dirs)
-│   │   ├── schema/             #   Drizzle ORM schema files
-│   │   └── migrations/         #   Drizzle Kit migration files
-│   ├── ai/                     # AI provider abstraction ⚠️ Future
-│   │   └── providers/          #   One adapter per backend
-│   ├── auth/                   # Auth module ⚠️ Phase 3
-│   ├── email/                  # Email providers ⚠️ Phase 18
-│   ├── storage/                # File storage abstraction ⚠️ Future
-│   └── utils.ts                # Pure utility functions: cn() helper
-│
-├── stores/                     # Zustand stores — cross-tree UI state
-│   └── ui/
-│       └── sidebar-store.ts    #   Sidebar collapse + mobile drawer state
-│
-├── hooks/                      # Shared React hooks ⚠️ Empty til Phase 2
-│
-├── providers/                  # React context providers (composition root)
-│   ├── index.tsx               #   AppProviders (theme + query + sonner)
-│   ├── theme.tsx               #   ThemeProvider wrapper (next-themes)
-│   └── query.tsx               #   TanStack Query factory (server-safe)
-│
+├── middleware.ts               # Auth / route protection
+├── app/                        # Next.js routing layer
+├── modules/                    # Feature modules (business logic)
+├── components/                 # Shared UI + app shell
+├── lib/                        # Infrastructure & shared utilities
+├── config/                     # Site, navigation, layout, design tokens
+├── providers/                  # AppProviders composition root
+├── stores/                     # Zustand state
 ├── types/                      # Global TypeScript types
-│   ├── index.ts                #   Barrel exports
-│   ├── common.ts               #   Nullable, DeepPartial, UnwrapPromise, Mutable
-│   ├── navigation.ts           #   NavItem, NavGroup, NavConfig
-│   └── theme.ts               #   ThemeMode, ThemeOption
+├── hooks/                      # Shared hooks (scaffold)
+├── constants/                  # Shared constants (scaffold)
+├── validation/                 # Shared Zod schemas (scaffold)
+└── styles/                     # (scaffold)
+```
+
+The application follows a module-oriented architecture.
+
+- `app/` handles routing and page composition only.
+- Business logic belongs inside `modules/`.
+- Shared infrastructure belongs inside `lib/`.
+- Shared UI belongs inside `components/`.
+
+## 3. src/app/ — Next.js Routing Layer
+```
+src/app/
+├── layout.tsx
+├── globals.css
+├── error.tsx
+├── global-error.tsx
+├── loading.tsx
+├── not-found.tsx
 │
-├── validation/                  # Shared Zod schemas ⚠️ Empty til Phase 2
+├── (marketing)/                # Public landing (no app chrome)
+│   ├── layout.tsx
+│   └── page.tsx
 │
-└── config/                      # Application configuration (settings, not infra)
-    ├── site.ts                  #   siteConfig object — branding, metadata, links
-    ├── navigation.ts            #   navigationConfig — nav registry (13 modules, 14 icons)
-    └── layout.ts               #   Layout constants — widths, heights, transitions
+├── (auth)/
+│   ├── layout.tsx
+│   ├── login/page.tsx
+│   ├── register/page.tsx
+│   ├── forgot-password/page.tsx
+│   ├── reset-password/page.tsx
+│   └── verify-email/page.tsx
+│
+├── (dashboard)/                # Authenticated area (AppShell)
+│   ├── layout.tsx
+│   └── dashboard/
+│       ├── page.tsx            # ← Dashboard home (thin composition)
+│       ├── tasks/page.tsx
+│       ├── habits/page.tsx
+│       ├── journal/page.tsx
+│       ├── notes/page.tsx
+│       ├── projects/page.tsx
+│       ├── goals/page.tsx
+│       ├── calendar/page.tsx
+│       ├── expenses/page.tsx
+│       ├── interviews/page.tsx
+│       ├── skills/page.tsx
+│       ├── analytics/page.tsx
+│       ├── resume/page.tsx
+│       └── settings/page.tsx
+│
+├── design-system/              # Design token showcase
+│   ├── layout.tsx
+│   └── page.tsx
+│
+└── api/
+    ├── .gitkeep
+    └── auth/[...all]/route.ts  # Better Auth API handler
 ```
 
----
+**Rule**
 
-## Module Boundary Rules (from Architecture.md)
+`app/` is a routing/composition layer.
+
+Pages should not contain:
+
+- database queries
+- business rules
+- module-specific data transformation
+- mock data
+- large inline rendering logic
+- reusable business helpers
+
+The Phase 5 dashboard is the reference implementation of this principle.
+
+> Note: dashboard module pages live nested at `(dashboard)/dashboard/<module>/`, all sharing the dashboard route root — there are no standalone `(dashboard)/tasks/`-style top-level routes.
+
+## 4. Dashboard Architecture — Phase 5
+
+The dashboard is now its own module.
 
 ```
-✅ A module MAY import from:
-  - src/lib/*           (infrastructure)
-  - src/components/*    (shared UI)
-  - src/hooks/*         (shared hooks)
-  - src/types/*         (global types)
-  - src/constants/*      (app constants)
-  - src/validation/*    (shared schemas)
-
-❌ A module MUST NEVER:
-  - Import from another module (modules/tasks → modules/habits)
-  - Contain business logic in app/ route files
-  - Directly access another module's database tables
+src/modules/dashboard/
+├── components/
+│   ├── welcome-header.tsx
+│   ├── stats-row.tsx
+│   ├── todays-tasks-widget.tsx
+│   ├── habit-streaks-widget.tsx
+│   ├── active-projects-widget.tsx
+│   ├── upcoming-events-widget.tsx
+│   ├── quick-notes-widget.tsx
+│   ├── this-month-widget.tsx
+│   ├── quarterly-goals-widget.tsx
+│   └── recent-activity-widget.tsx
+│
+├── widgets/
+│   └── quick-actions/
+│       └── quick-actions-widget.tsx
+│
+├── services/
+│   └── dashboard-service.ts        # getDashboardSnapshot() aggregator
+│
+├── constants.ts                    # WIDGET_DEFINITIONS, DASHBOARD_GRID
+└── types.ts                        # WidgetDataMap, WidgetState<T>, DashboardSnapshot
 ```
 
----
+The dashboard route remains intentionally thin:
 
-## Naming Conventions
+```
+src/app/(dashboard)/dashboard/page.tsx
+                │
+                ▼
+getDashboardSnapshot()
+                │
+                ▼
+   DashboardSnapshot
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+ Computed slices     Module slices
+ welcome/stats       tasks/habits/projects/...
+        │                │
+        └───────┬────────┘
+                ▼
+      Dashboard Widgets
+```
 
-| What | Convention | Location |
-|------|-----------|----------|
-| Modules | lowercase directory | `src/modules/tasks/` |
-| Components | PascalCase | `TaskCard.tsx` |
-| Utilities | kebab-case | `format-date.ts` |
-| Route groups | (parentheses) | `(dashboard)/` |
+**Dashboard responsibility**
+
+The dashboard page only:
+
+- calls `getDashboardSnapshot()`
+- handles the top-level failure
+- passes each snapshot slice to the correct widget
+
+It does not own business logic.
+
+## 5. Dashboard Service Architecture
+
+The Phase 5 dashboard aggregator uses a contributor-based architecture.
+
+```
+Dashboard Page
+      │
+      ▼
+getDashboardSnapshot()
+      │
+      ▼
+SnapshotContributors
+      │
+      ├── Task Service
+      ├── Habit Service
+      ├── Project Service
+      ├── Goal Service
+      ├── Journal Service
+      ├── Note Service
+      ├── Calendar Service
+      ├── Expense Service
+      └── Activity Service
+      │
+      ▼
+WidgetState slices
+      │
+      ├── tasks
+      ├── habits
+      ├── projects
+      ├── goals
+      ├── journal
+      ├── notes
+      ├── calendar
+      ├── expenses
+      └── activity
+      │
+      ▼
+Computed dashboard slices
+      ├── welcome
+      └── stats
+      │
+      ▼
+DashboardSnapshot
+```
+
+The dashboard therefore does not directly call nine different services. It calls `getDashboardSnapshot()` once.
+
+## 6. src/modules/ — Feature Modules
+```
+src/modules/
+├── dashboard/                  # Phase 5 — implemented (aggregator + widgets)
+├── activity/                   # Phase 5 — implemented (types + datasource + service)
+├── tasks/                      # Phase 5 contracts; Phase 6 CRUD
+├── habits/                     # Phase 5 contracts; Phase 7
+├── journal/                    # Phase 5 contracts; Phase 8
+├── notes/                      # Phase 5 contracts; Phase 9
+├── projects/                   # Phase 5 contracts; Phase 10
+├── goals/                      # Phase 5 contracts; Phase 11
+├── calendar/                   # Phase 5 contracts; Phase 12
+├── expenses/                   # Phase 5 contracts; Phase 13
+├── auth/                       # Phase 3 — forms + validation (no service layer)
+├── analytics/                  # empty shell
+├── interviews/                 # empty shell
+├── resume/                     # empty shell
+├── settings/                   # empty shell
+└── notifications/              # empty shell
+```
+
+In Phase 5 the data-backed modules (`tasks`, `habits`, `journal`, `notes`, `projects`, `goals`, `calendar`, `expenses`, `activity`) each gained `types.ts`, a `datasource/`, and a `services/`. Their `components/` and `hooks/` remain scaffolds until the module's own phase.
+
+## 7. Module Internal Architecture
+
+Phase 5 established the pattern later modules should follow.
+
+A typical domain module looks like:
+
+```
+src/modules/tasks/
+│
+├── components/                 # Module-specific UI (scaffold until module phase)
+├── hooks/                      # Module-specific hooks (scaffold)
+├── datasource/                 # Data access adapter (mock today → Drizzle)
+│   └── task-datasource.ts
+├── services/                   # Business/domain logic
+│   └── task-service.ts
+├── types.ts                    # Domain + widget data-slice types
+├── validation.ts               # Zod validation (added in module phase)
+└── actions.ts                  # Server Actions (added in module phase)
+```
+
+The exact files may differ by module, but the architectural direction is:
+
+```
+UI / Route
+    ↓
+Server Action / Server Logic
+    ↓
+Service
+    ↓
+Datasource / Repository
+    ↓
+Drizzle
+    ↓
+PostgreSQL
+```
+
+> Convention: the data-access directory is `datasource/` (not `data-sources/`), and files are named `task-datasource.ts` / `task-service.ts`.
+
+## 8. Phase 5 Dashboard → Module Relationship
+
+The dashboard consumes module services rather than bypassing them.
+
+For example:
+
+```
+Task Data Source
+    ↓
+Task Service
+    ↓
+getDashboardSnapshot()
+    ↓
+TodaysTasksWidget
+```
+
+The dashboard must not:
+
+```
+Dashboard
+   ↓
+Direct database query
+```
+
+and must not create a second task implementation.
+
+This allows Phase 6 and later phases to replace mock data sources with database-backed ones without rewriting the dashboard.
+
+## 9. src/modules/tasks/ — Phase 6
+
+Phase 5 already delivered the `tasks` module contracts:
+
+```
+src/modules/tasks/
+├── types.ts
+├── datasource/task-datasource.ts
+└── services/task-service.ts
+```
+
+Phase 6 builds the persistent module on top:
+
+```
+src/modules/tasks/
+├── actions.ts                  # + in Phase 6
+├── validation.ts               # + in Phase 6
+├── services/                   # 🔄 extend
+├── datasource/                 # 🔄 Drizzle-backed impl
+├── components/                 # + in Phase 6
+└── hooks/                      # + in Phase 6
+```
+
+Tasks own:
+
+- task business rules
+- task validation
+- task queries
+- task CRUD
+- completion logic
+- task-specific UI
+- user ownership checks
+
+The dashboard consumes the Task Service rather than implementing task logic itself.
+
+## 10. src/components/ — Shared UI
+```
+src/components/
+├── ui/                         # shadcn/ui primitives
+│   ├── button.tsx
+│   ├── dialog.tsx
+│   ├── dropdown-menu.tsx
+│   ├── input.tsx
+│   └── label.tsx
+│
+├── layout/                     # Application-wide chrome
+│   ├── app-shell.tsx
+│   ├── sidebar.tsx
+│   ├── header.tsx
+│   ├── footer.tsx
+│   ├── breadcrumb.tsx
+│   ├── container.tsx
+│   ├── theme-toggle.tsx
+│   └── user-menu.tsx
+│
+├── shared/                     # Reusable cross-domain components
+│   ├── card.tsx
+│   ├── empty-state.tsx
+│   ├── progress-bar.tsx
+│   ├── search-input.tsx
+│   ├── stats-card.tsx
+│   ├── section-header.tsx
+│   ├── filter-dropdown.tsx
+│   ├── fade-in.tsx
+│   └── command-palette.tsx
+│
+└── landing/                    # Marketing-page sections
+    ├── hero.tsx
+    ├── features-section.tsx
+    ├── how-it-works.tsx
+    ├── preview-section.tsx
+    ├── testimonials.tsx
+    ├── roadmap-section.tsx
+    ├── cta-section.tsx
+    ├── site-footer.tsx
+    ├── logo-link.tsx
+    └── github-icon.tsx
+```
+
+- `ui/` — reusable shadcn/ui primitives.
+- `layout/` — application-wide layout components.
+- `shared/` — reusable components not owned by one domain module.
+- `landing/` — marketing website sections.
+
+Module-specific UI stays inside the corresponding module.
+
+## 11. src/lib/ — Infrastructure
+```
+src/lib/
+├── config/                     # Environment & service configuration
+│   ├── env.ts
+│   ├── database.ts
+│   └── auth.ts
+│
+├── auth/                       # Better Auth helpers
+│   ├── config.ts
+│   ├── client.ts
+│   └── session.ts
+│
+├── db/                         # Database layer
+│   ├── client.ts               # Drizzle client
+│   ├── schema.ts               # Schema barrel
+│   ├── schema/                 # Per-domain schema files
+│   │   └── auth.ts
+│   └── migrations/             # Generated SQL migrations + meta
+│
+├── ai/                         # (scaffold)
+│   └── providers/
+├── email/                      # (scaffold)
+├── storage/                    # (scaffold)
+│
+├── result.ts                   # ServiceResult<T> contract (Phase 5)
+├── format-date.ts              # Hydration-safe date helpers
+├── mock-data.ts                # Deterministic demo data (read by datasources)
+└── utils.ts                    # cn() and shared utilities
+```
+
+`lib/` contains infrastructure and shared technical services. It must not contain domain-specific business logic.
+
+## 12. Database Layer
+```
+src/lib/db/
+├── client.ts
+├── schema.ts                   # Schema barrel
+├── schema/
+│   └── auth.ts                 # Auth sub-schema
+├── migrations/
+│   ├── 0000_*.sql
+│   └── meta/
+└── ...
+```
+
+Database responsibilities:
+
+```
+Module Datasource
+        ↓
+Drizzle ORM
+        ↓
+PostgreSQL
+```
+
+Database access must remain user-scoped where the domain is user-owned.
+
+## 13. Other Shared Application Layers
+```
+src/
+├── providers/                  # AppProviders composition root
+│   ├── index.tsx
+│   ├── theme.tsx
+│   └── query.tsx
+│
+├── stores/                     # Zustand UI state
+│   └── ui/
+│       └── sidebar-store.ts
+│
+├── config/                     # Application configuration
+│   ├── site.ts
+│   ├── navigation.ts
+│   ├── layout.ts
+│   └── design-tokens.ts
+│
+├── types/                      # Global types
+│   ├── index.ts
+│   ├── common.ts
+│   ├── navigation.ts
+│   └── theme.ts
+│
+├── hooks/                      # (scaffold)
+├── constants/                  # (scaffold)
+├── validation/                 # (scaffold)
+└── styles/                     # (scaffold)
+```
+
+## 14. Module Boundary Rules
+
+These rules remain fundamental.
+
+**Modules MAY import**
+
+- `src/lib/*`
+- `src/components/*`
+- `src/hooks/*`
+- `src/types/*`
+- `src/constants/*`
+- `src/validation/*`
+
+**Modules MUST NOT**
+
+- ❌ Import another feature module directly
+- ❌ Access another module's database tables directly
+- ❌ Put business logic in `app/` pages
+- ❌ Duplicate another module's service/data-access logic
+
+The dashboard is an intentional composition/aggregation layer, so it may consume module services through its dashboard service.
+
+## 15. Naming Conventions
+| Item | Convention | Example |
+|------|-----------|---------|
+| Module directory | lowercase | `tasks/` |
+| Component files | kebab-case | `task-card.tsx` |
+| Utility files | kebab-case | `format-date.ts` |
+| Route groups | parentheses | `(dashboard)/` |
+| Types | PascalCase | `TaskWidgetData` |
+| Functions | camelCase | `getTaskSummary()` |
+| Server Actions | camelCase | `createTask()` |
 | Zod schemas | camelCase + `Schema` | `createTaskSchema` |
-| Server Actions | camelCase | `createTask.ts` |
+| DataSource files | kebab-case, `datasource` dir | `task-datasource.ts` |
+| Service files | kebab-case | `task-service.ts` |
 
----
+## 16. Current Phase Status
+| Phase | Area | Structure Status |
+|-------|------|------------------|
+| Phase 1 | Project Setup | ✅ Implemented |
+| Phase 2 | Design System & Layout | ✅ Implemented |
+| Phase 3 | Authentication | ✅ Implemented |
+| Phase 4 | Database Foundation / Architecture | ✅ Implemented |
+| Phase 5 | Dashboard Architecture | ✅ Implemented |
+| Phase 6 | Task Management | 🔄 Next |
+| Phase 7 | Habit Tracker | 🔄 Planned |
+| Phase 8 | Journal | 🔄 Planned |
+| Phase 9 | Notes | 🔄 Planned |
+| Phase 10 | Projects | 🔄 Planned |
+| Phase 11 | Goal Tracker | 🔄 Planned |
+| Phase 12 | Calendar | 🔄 Planned |
+| Phase 13 | Expense Tracker | 🔄 Planned |
+| Phase 14 | Interview Tracker | 🔄 Planned |
+| Phase 15 | Resume Manager | 🔄 Planned |
+| Phase 16 | Analytics | 🔄 Planned |
+| Phase 17 | Settings & Profile | 🔄 Planned |
+| Phase 18 | Production, PWA & Deployment | 🔄 Planned |
 
-## Key Design Decisions
+## 17. Architecture Evolution
 
-1. **Route groups** `(auth)` and `(dashboard)` share the same URL path but different layouts — (auth) has no sidebar, (dashboard) wraps in AppShell
-2. **One route = one folder** — `app/(dashboard)/tasks/` is a single `page.tsx` with thin routing (delegates to module)
-3. **Modules map 1:1 to routes** — `app/(dashboard)/tasks/` calls `modules/tasks/actions.ts`
-4. **No cross-module imports** — enforced by convention + code review. ESLint rule added later
-5. **lib/config/env.ts is the single source of truth** for environment variables — every env var the app touches is validated there
+LifeOS has evolved through the first five phases as follows:
 
----
+```
+Phase 1
+Project Foundation
+      ↓
+Phase 2
+Design System + Layout Shell
+      ↓
+Phase 3
+Authentication
+      ↓
+Phase 4
+Database + Domain Architecture
+      ↓
+Phase 5
+Dashboard Aggregation Architecture
+      ↓
+Phase 6+
+Real Persistent Feature Modules
+```
 
-*Last updated: 2026-07-30 — Phase 1*
+The important architectural transition is:
+
+```
+Phase 1–3
+Foundation + UI + Auth
+
+        ↓
+
+Phase 4
+Data / Domain Architecture
+
+        ↓
+
+Phase 5
+Dashboard consumes domain services
+
+        ↓
+
+Phase 6+
+Real PostgreSQL-backed modules
+```
+
+This means the project is no longer building isolated UI screens. It is now moving toward real domain modules connected through shared architectural contracts.

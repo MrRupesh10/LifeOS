@@ -1,0 +1,9 @@
+{
+  // Recommended extensions — VS Code prompts to install these on first open.
+  "recommendations": [
+    "dbaeumer.vscode-eslint", // ESLint 9 flat-config support
+    "esbenp.prettier-vscode", // Prettier 3 + tailwind plugin
+    "bradlc.vscode-tailwindcss", // Tailwind v4 IntelliSense
+    "ms-vscode.vscode-typescript-next" // Next TS grammar (React 19 / TS 5.9)
+  ]
+}

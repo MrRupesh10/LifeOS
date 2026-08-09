@@ -39,3 +39,5 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+# Claude Code local settings (machine-specific, never commit)
+.claude/settings.local.json
