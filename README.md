@@ -24,14 +24,15 @@ LifeOS fixes that. It's one app, one experience, one data model, where everythin
 
 | Version | Status |
 |----------|--------|
-| **v0.5.0-alpha** | ✅ Current Release |
+| **v0.6.0-alpha** | ✅ Current Release |
 | Phase 0 | ✅ Complete |
 | Phase 1 | ✅ Complete |
 | Phase 2 | ✅ Complete |
 | Phase 3 | ✅ Complete |
 | Phase 4 | ✅ Complete |
 | Phase 5 | ✅ Complete |
-| Phase 6 | 🚧 Next |
+| Phase 6 | ✅ Complete |
+| Phase 7 | 🚧 Next |
 
 ---
 
@@ -386,9 +387,24 @@ Completed
 
 ---
 
+## ✅ Phase 6 — Task Management, Database Integration & Verification
+
+Completed
+
+* Task Management Module & CRUD
+* PostgreSQL `tasks` Schema & Migration
+* Task Service & DataSource Layer
+* Task Filters & Sorting
+* Dashboard Task Integration
+* Task Summary & Today/Upcoming Logic
+* Asia/Kolkata Timezone Handling
+* End-to-End Task & Dashboard Verification
+* M12 Verification Gates & Implementation Report
+
+---
+S
 ## 🚧 Upcoming
 
-- Phase 6 — Task Management
 - Phase 7 — Habit Tracker
 - Phase 8 — Journal
 - Phase 9 — Notes
@@ -474,8 +490,8 @@ MIT License
 
 ---
 
-> **Current Release:** **v0.5.0-alpha**
+> **Current Release:** **v0.6.0-alpha**
 >
-> **Last Updated:** 2026-08-08
+> **Last Updated:** 2026-08-15
 >
-> **Status:** Phase 5 Complete • Dashboard Foundation & Widget Architecture Shipped
+> **Status:** Phase 6 Complete • Task Management, Database Integration & Verification

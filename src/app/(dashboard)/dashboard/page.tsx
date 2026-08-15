@@ -5,6 +5,9 @@
 // existing widgets — each receiving exactly its own `WidgetState` slice from
 // the snapshot. No mock data, no filtering, no inline rendering here.
 
+import { redirect } from "next/navigation";
+
+import { getSession } from "@/lib/auth/session";
 import { getDashboardSnapshot } from "@/modules/dashboard/services/dashboard-service";
 import WelcomeHeader from "@/modules/dashboard/components/welcome-header";
 import StatsRow from "@/modules/dashboard/components/stats-row";
@@ -19,7 +22,13 @@ import RecentActivityWidget from "@/modules/dashboard/components/recent-activity
 import QuickActionsWidget from "@/modules/dashboard/widgets/quick-actions/quick-actions-widget";
 
 export default async function DashboardPage() {
-  const result = await getDashboardSnapshot();
+  // Auth boundary — the real signed-in user drives the whole snapshot. The
+  // dashboard (composition layer) never owns queries; passing the session's
+  // id/name lets the aggregator scope the Task service data to the user.
+  const session = await getSession();
+  if (!session?.user.id) redirect("/login");
+
+  const result = await getDashboardSnapshot(session.user.id, session.user.name);
 
   if (!result.success) {
     return <div className="text-destructive p-4">Failed to load dashboard: {result.message}</div>;

@@ -10,14 +10,14 @@
 | Field | Value |
 |-------|-------|
 | **Project** | LifeOS |
-| **Current Version** | **v0.5.0-alpha** |
-| **Current Phase** | **Phase 5 — Dashboard Foundation & Widget Architecture ✅ Complete** |
-| **Next Phase** | **Phase 6 — Task Management** |
+| **Current Version** | **v0.6.0-alpha** |
+| **Current Phase** | **Phase 6 — Task Management (Business Module MVP) ✅ Complete** |
+| **Next Phase** | **Phase 7 — Habit Tracker** |
 | **Current Sprint** | Sprint 3 |
 | **Sprint Focus** | Task Management, Business Schemas & Server Actions |
 | **Repository Status** | Active Development |
 | **License** | MIT |
-| **Last Updated** | 2026-08-08 |
+| **Last Updated** | 2026-08-14 |
 
 ---
 
@@ -31,7 +31,7 @@
 | Phase 3 | Authentication | ✅ Complete |
 | Phase 4 | Database Foundation | ✅ Complete |
 | Phase 5 | Dashboard | ✅ Complete |
-| Phase 6 | Task Management | 🚧 Next |
+| Phase 6 | Task Management | ✅ Complete |
 | Phase 7 | Habit Tracker | ⏳ Planned |
 | Phase 8 | Journal | ⏳ Planned |
 | Phase 9 | Notes | ⏳ Planned |
@@ -62,7 +62,7 @@
 | Database | ✅ |
 | API Infrastructure | 🚧 |
 | Dashboard Logic | ✅ |
-| Task Module | ⏳ |
+| Task Module | ✅ |
 | Habit Module | ⏳ |
 | Journal | ⏳ |
 | Notes | ⏳ |
@@ -724,6 +724,116 @@ Production build verified: 24 routes, `/dashboard` prerendered static (`○`).
 
 ---
 
+# Completed Milestones — Phase 6
+
+## Task Management (Business Module MVP)
+
+**Status:** ✅ Complete
+
+**Release:** `v0.6.0-alpha`
+
+**Objective**
+
+Take the Tasks module from a mock shell to the app's first **real DB-backed business module**: a user-scoped `tasks` table (Drizzle migration `0001`), the repo's first Server Action module with shared Zod validation, a server-composition Tasks page, URL-driven filter/sort, an optimistic completion toggle, and real-data dashboard integration through the Phase 5 seams — plus the Asia/Kolkata timezone/date fix surfaced during verification.
+
+---
+
+## Milestones
+
+| Milestone | Status | What Shipped |
+|-----------|--------|-------------|
+| M50 | ✅ | Repo & architecture audit — confirmed `TaskDataSource` seam, `getTaskSummary` contract, migration `0001` next; no drift |
+| M51 | ✅ | Database schema + migration `0001_graceful_ultimo.sql` — `tasks` table (UUID PK, `user_id` FK cascade, 3 indexes) |
+| M52 | ✅ | `DrizzleTaskDataSource` — user-scoped, ownership at the SQL boundary, `getUserTasks(userId)` + CRUD/toggle |
+| M53 | ✅ | Service layer — `getTasks(userId,{filter,sort})`, today/upcoming/completed filters, due/priority/created sorts; `getTaskSummary` preserved |
+| M54 | ✅ | Validation + first Server Actions (`actions.ts`) — Zod schemas, auth-gated, revalidating |
+| M55 | ✅ | Tasks page (server composition) — session guard, validated `searchParams`, real states, no mock |
+| M56 | ✅ | Task CRUD UI — `TaskForm` (RHF+zod) behind `NewTaskDialog` + inline edit/delete dialogs in `TaskItem` |
+| M57 | ✅ | Filtering + Sorting — server-component URL-driven `TaskFilterBar` (`?filter`/`?sort`) |
+| M58 | ✅ | Completion UX — optimistic toggle (`useState` + `useTransition`), exact rollback, completed styling |
+| M59 | ✅ | Dashboard real-data — auth-gated, `getDashboardSnapshot(userId, name)`, Today's Tasks reads real rows |
+| M60 | ✅ | Error / Empty / Loading states across all read + mutation paths (incl. delete `isDeleting` in-flight) |
+| M61 | ✅ | Verification — reconciliation + apply of migration `0001`, DB checks, smoke tests, SSR/auth-boundary checks, timezone fix, all gates |
+
+---
+
+## Major Deliverables
+
+### Database Schema & Migration
+
+`src/lib/db/schema/tasks.ts` + migration `0001_graceful_ultimo.sql`. The `tasks` table: **UUID primary key**, `user_id` → `users.id` FK with **`ON DELETE CASCADE`**, and three indexes — `tasks_user_id_idx`, `tasks_status_idx`, `tasks_due_date_idx`. `priority`/`status` are `varchar(32)` with defaults (not pgEnum, matching the `users.role` precedent). `project_id` present without a FK (Projects lands in Phase 10); `goal_id` deferred to Phase 11. Applied to the dev Neon DB directly in a single transaction (auth tables matched `0000`; `__drizzle_migrations` absent) and verified afterward.
+
+---
+
+### User-Scoped Data Source
+
+`DrizzleTaskDataSource` replaces the mock behind the preserved `createTaskDataSource()` factory. Reads (`getUserTasks`, `getPending`, `getByDate`) and mutations (`create`/`update`/`remove`/`toggleComplete`) are **user-scoped** — ownership enforced at the SQL boundary via `WHERE (user_id = :userId AND id = :id)`. All results are serializable `ServiceResult` (never throw); `toDomain()`/`toDate()` map `Date` ↔ ISO string.
+
+---
+
+### Task Service Layer
+
+`getTasks(userId, { filter, sort })` is the single read entry point. Filter semantics: `today` = non-completed, due on/before today (includes overdue); `upcoming` = non-completed, due strictly after today; `completed`/`all` load every row. Sorts: `dueDate` (nulls last), `priority` (high→low), `createdAt` (newest first). `getTaskSummary` (dashboard contract) preserved byte-for-byte.
+
+---
+
+### Validation + Server Actions (first in the repo)
+
+Shared client+server Zod schemas in `validation.ts` keep forms and actions in lockstep. Four actions — `createTaskAction`, `updateTaskAction`, `deleteTaskAction`, `toggleTaskCompletionAction` — each: `getSession()` gate → shared schema parse → service → `revalidatePath`. No REST routes; Server Actions are the sole mutation boundary.
+
+---
+
+### Tasks Page & UI
+
+`/dashboard/tasks` is a server component: session guard, validated `searchParams`, `<Suspense>` skeleton, filter-aware empty state, real `ServiceResult.message` error banner. `TaskForm` (react-hook-form + Zod) behind `NewTaskDialog` (create) and inline edit/delete dialogs in `TaskItem`. `TaskFilterBar` is a **server-component, URL-driven** single-select control. Completion is an optimistic toggle with exact rollback. Every read and mutation path shows real loading/empty/error/success.
+
+---
+
+### Dashboard Real-Data Integration
+
+`/dashboard` is now auth-gated and **`ƒ (Dynamic)`**. `getDashboardSnapshot(session.user.id, session.user.name)` resolves the `OWNER_NAME` placeholder; Today's Tasks and `tasksDueToday` read real, user-scoped rows through the untouched Phase 5 aggregator registration seam. All applied with zero change to the widget/aggregator shape.
+
+---
+
+### Timezone / Date Fix
+
+`todayKey()` in `task-service.ts` previously used the **UTC** day (`toISOString().slice(0, 10)`), slipping a day against the app's intended `Asia/Kolkata` (+05:30) zone. Replaced with `Intl.DateTimeFormat("en-CA", { timeZone: APP_TIMEZONE })` — a zone-correct `YYYY-MM-DD` — fixing `Today`/`Upcoming` filters, the pending-due-today summary, and the dashboard's "Tasks Due Today" together.
+
+---
+
+### Architecture Decisions
+
+- User-scoped datasource + `getUserTasks` naming; ownership enforced at the SQL boundary
+- today/upcoming filter semantics; sort-by-created newest-first; `APP_TIMEZONE = "Asia/Kolkata"` as the single source of truth for "today"
+- Shared-validation-file pattern; Server Actions as the sole mutation boundary; delete-returns-`{success, message?}`
+- RHF/Zod optional-string `dueDate`; `varchar`-enum precedent; kebab-case component filenames (`task-item.tsx`, `task-form.tsx`, `task-filter-bar.tsx`)
+
+---
+
+### Verification
+
+| Gate | Status |
+|------|--------|
+| TypeScript | ✅ |
+| ESLint | ✅ |
+| Prettier (`format:check`) | ✅ |
+| Production Build | ✅ |
+| Drizzle `db:generate` | ✅ |
+| DB reconciliation + migration `0001` applied/verified | ✅ |
+| `tasks` table / FK / indexes | ✅ |
+| Read-only TaskService smoke | ✅ |
+| DashboardService smoke/regression | ✅ |
+| Unauthenticated SSR / auth-boundary checks | ✅ |
+| Authenticated browser/manual verification | ✅ |
+
+Production build verified: 24 routes; `/dashboard` and `/dashboard/tasks` are now `ƒ (Dynamic)` (auth-gated, session/user-scoped — do not re-statify).
+
+---
+
+> **Next:** Phase 7 — Habit Tracker
+
+---
+
 # What's Running Now
 
 The following systems are currently implemented and fully functional in the application.
@@ -746,6 +856,7 @@ The following systems are currently implemented and fully functional in the appl
 | **Mock Data** | ✅ | Deterministic demo data powering dashboard and module pages |
 | **Dashboard Architecture** | ✅ | `ServiceResult` contract, Module DataSources + Services, aggregator (`getDashboardSnapshot`) |
 | **Dashboard Widgets** | ✅ | 11 pure-presentational widgets, each fed its own typed `WidgetState` slice |
+| **Task Module** | ✅ | Real DB-backed CRUD — user-scoped `tasks` table, Server Actions + Zod, server-composition page, URL-driven filter/sort, optimistic completion toggle, dashboard integration |
 
 ---
 
@@ -778,16 +889,16 @@ The following systems are currently implemented and fully functional in the appl
 
 | Metric | Value |
 |---------|------:|
-| Current Version | **0.5.0-alpha** |
-| Completed Phases | **6 (Phase 0–5)** |
-| Completed Milestones | **49** |
+| Current Version | **0.6.0-alpha** |
+| Completed Phases | **7 (Phase 0–6)** |
+| Completed Milestones | **61** |
 | Production Routes | **24** |
 | Navigation Modules | **14** |
 | Shared UI Components | **15+** |
 | Authentication Pages | **5** |
-| Database Tables | **Auth + Core Foundation** |
+| Database Tables | **Auth + `tasks`** |
 | Documentation Files | **15+** |
-| Git Tags | **v0.0.1 → v0.5.0-alpha** |
+| Git Tags | **v0.0.1 → v0.5.0-alpha** (v0.6.0 release pending) |
 | Build Status | ✅ Passing |
 | TypeScript | ✅ Passing |
 | ESLint | ✅ Passing |
@@ -820,8 +931,8 @@ The following systems are currently implemented and fully functional in the appl
 
 | Phase | Focus | Status |
 |--------|-------|--------|
-| **Phase 6** | Task Management | 🔜 |
 | **Phase 7** | Habit Tracker | 🔜 |
+| **Phase 8** | Journal | 🔜 |
 | **Phase 8** | Journal | 🔜 |
 | **Phase 9** | Notes | 🔜 |
 | **Phase 10** | Projects | 🔜 |
@@ -873,6 +984,7 @@ The next development phase focuses on the first business module — Task Managem
 | **0.3.0-alpha** | 2026-08-04 | Authentication |
 | **0.4.0-alpha** | 2026-08-04 | Database Foundation |
 | **0.5.0-alpha** | 2026-08-09 | Dashboard Foundation & Widget Architecture |
+| **0.6.0-alpha** | 2026-08-14 | Task Management (Business Module MVP) |
 
 ---
 
@@ -886,10 +998,11 @@ The next development phase focuses on the first business module — Task Managem
 - ✅ Phase 3 — Authentication
 - ✅ Phase 4 — Database Foundation
 - ✅ Phase 5 — Dashboard Foundation & Widget Architecture
+- ✅ Phase 6 — Task Management (Business Module MVP)
 
 ## Current Focus
 
-Preparing Phase 6 — Task Management, business schemas, and connecting widgets to PostgreSQL.
+Preparing Phase 7 — Habit Tracker, the next business module built on the Task Management patterns (schema + migration, Server Actions, server-composition page, URL-driven filtering, dashboard integration).
 
 ---
 
@@ -901,18 +1014,24 @@ All quality gates currently pass successfully.
 |--------------|--------|
 | pnpm typecheck | ✅ Pass |
 | pnpm lint | ✅ Pass |
+| pnpm format:check | ✅ Pass |
 | pnpm build | ✅ Pass |
+| pnpm db:generate | ✅ Pass |
 | Authentication Routes | ✅ Verified |
 | Database Configuration | ✅ Verified |
 | Middleware Protection | ✅ Verified |
 | Dashboard Build (24 routes) | ✅ Verified |
+| Migration `0001` applied + verified | ✅ Verified |
+| TaskService / DashboardService smoke | ✅ Verified |
+| SSR / auth-boundary checks | ✅ Verified |
+| Authenticated browser/manual E2E | ✅ Verified |
 
 ---
 
-*Last Updated: 2026-08-08*
+*Last Updated: 2026-08-14*
 
-**Current Release:** `v0.5.0-alpha`
+**Current Release:** `v0.6.0-alpha`
 
-**Project Status:** Phase 5 — Dashboard Foundation & Widget Architecture Complete ✅
+**Project Status:** Phase 6 — Task Management (Business Module MVP) Complete ✅
 
-**Next Target:** Phase 6 — Task Management
+**Next Target:** Phase 7 — Habit Tracker

@@ -6,9 +6,89 @@ The format is based on **Keep a Changelog** and the project adheres to **Semanti
 
 ---
 
-# [0.5.0-alpha] — 2026-08-09
+# [0.6.0-alpha] — 2026-08-14
 
-## Phase 5 — Dashboard Foundation & Widget Architecture
+## Phase 6 — Task Management (Business Module MVP)
+
+This release takes the Tasks module from a mock shell to a fully working, user-scoped CRUD feature over PostgreSQL via Drizzle — the first real DB-backed business module in LifeOS. It brings the repo's first Server Action module, the first user-scoped datasource, the first domain table beyond auth (migration `0001`), a server-composition Tasks page, a URL-driven filter/sort bar, an optimistic completion toggle, and real-data dashboard integration through the Phase 5 seams. It also fixes the Asia/Kolkata timezone/date boundary error surfaced during verification.
+
+### Added
+
+#### Database Schema & Migration
+
+- `tasks` table (`src/lib/db/schema/tasks.ts`, migration `0001_graceful_ultimo.sql`)
+  - UUID primary key, `user_id` → `users.id` FK with `ON DELETE CASCADE`
+  - Indexes: `tasks_user_id_idx`, `tasks_status_idx`, `tasks_due_date_idx`
+  - varchar `priority`/`status` with defaults (not pgEnum, per `users.role` precedent)
+  - `project_id` present without a FK (Projects lands in Phase 10); `goal_id` deferred to Phase 11
+- Migration `0001` applied to the dev Neon DB directly in a single transaction (auth tables matched `0000`; `__drizzle_migrations` absent) and verified afterward
+
+#### Data Source (Drizzle, user-scoped)
+
+- `DrizzleTaskDataSource` replaces the mock behind the preserved `createTaskDataSource()` factory
+- User-scoped reads and mutations; ownership enforced at the SQL boundary via `WHERE (user_id AND id)`
+- `getUserTasks(userId)`; `create`/`update`/`remove`/`toggleComplete` — all returning serializable `ServiceResult` (never throw)
+
+#### Service Layer
+
+- `getTasks(userId, { filter, sort })` as the single read entry point
+- `today` (due on/before, non-completed), `upcoming` (strictly after), `completed`, `all` filters; `dueDate`/`priority`/`createdAt` sorts
+- `getTaskSummary` dashboard contract preserved byte-for-byte
+
+#### Validation + Server Actions
+
+- Repo's first `actions.ts` — `createTaskAction`, `updateTaskAction`, `deleteTaskAction`, `toggleTaskCompletionAction`
+- Each action: `getSession()` auth gate → shared Zod parse → service → `revalidatePath`
+- Shared client+server Zod schemas in `validation.ts` (no drift between forms and actions)
+
+#### Tasks Page & UI
+
+- `/dashboard/tasks` rewritten as a server component — session guard, validated `searchParams`, `<Suspense>` skeleton, real error/empty/success states, no mock
+- `TaskForm` (react-hook-form + Zod) behind `NewTaskDialog` (create) and inline edit/delete dialogs in `TaskItem`
+- `TaskFilterBar` — server-component, URL-driven single-select filter (All/Today/Upcoming/Completed) and sort (Due/Priority/Created)
+- Optimistic completion toggle via `useState` mirror + `useTransition`, exact rollback on failure, Sonner feedback
+- Full error/empty/loading handling across all read and mutation paths (create/edit → `submitting`, toggle → `useTransition`, delete → `isDeleting`)
+
+### Changed
+
+- Dashboard is now auth-gated and **`ƒ (Dynamic)`**; `getDashboardSnapshot(userId, name)` resolves the `OWNER_NAME` placeholder and threads the real user id to the Task service
+- Today's Tasks widget + `tasksDueToday` stat now read real, user-scoped rows through the untouched Phase 5 aggregator seam
+- Migration journal advanced with entry `0001` (`meta/_journal.json`, `0001_snapshot.json` auto-generated)
+
+### Fixed
+
+- **Asia/Kolkata timezone/date bug** — `todayKey()` used UTC via `toISOString().slice(0,10)`, so the calendar-day boundary slipped a day against the intended `Asia/Kolkata` (+05:30) zone; replaced with `Intl.DateTimeFormat("en-CA", { timeZone: APP_TIMEZONE })`, correcting Today/Upcoming filters, the pending-due-today summary, and the dashboard's "Tasks Due Today"
+- Removed mock/Tasks table errors at runtime once migration `0001` was applied
+- Empty-state and error-state presentation across the list (real `ServiceResult.message`, filter-aware copy)
+
+### Architecture Decisions
+
+- User-scoped datasource + `getUserTasks` naming; today/upcoming filter semantics; sort-by-created newest-first
+- Asia/Kolkata `APP_TIMEZONE` as the single source of truth for "today"
+- Shared-validation-file pattern; Server Actions as the sole mutation boundary
+- delete-returns-`{success, message?}` serializable shape; RHF/Zod optional-string `dueDate`
+- Component-filename **kebab-case** precedent (`task-item.tsx`, `task-form.tsx`, `task-filter-bar.tsx`)
+
+### Documentation
+
+- Updated CLAUDE project memory (Phase 6 status + architecture)
+- Created `.claude/plans/phase6-task-implementation.md` (execution log) and `phase6-task-management.md` (requirements)
+- Main docs (`docs/DATABASE.md`, `docs/PROJECT_STATUS.md`, `README.md`), ADRs, and the Git tag/release/push are **deferred to a follow-up session**
+
+### Verification
+
+- ✅ `pnpm typecheck`
+- ✅ `pnpm lint`
+- ✅ `pnpm format:check`
+- ✅ `pnpm build`
+- ✅ `pnpm db:generate`
+- ✅ DB reconciled + migration `0001` applied and verified (table/FK/indexes)
+- ✅ Read-only TaskService smoke
+- ✅ DashboardService smoke/regression
+- ✅ Unauthenticated protected-route SSR/auth-boundary checks
+- ✅ Authenticated browser/manual verification (Asia/Kolkata today, Today filter, dashboard "Tasks Due Today")
+
+---
 
 This release replaces the monolithic 333-line dashboard page with a pure composition layer backed by a reusable widget architecture: a `ServiceResult` contract, typed module DataSources and Services, a dashboard aggregator, UI widget definitions, and eleven presentational widgets — each fed exactly its own typed data slice. The visual dashboard is preserved while the architecture underneath is swapped for a production-ready, Phase-6-ready pattern.
 
@@ -592,6 +672,7 @@ This release primarily consists of documentation and project planning artifacts 
 
 | Version | Date | Release |
 |----------|------------|----------------------------------------------|
+| **0.6.0-alpha** | 2026-08-14 | Phase 6 — Task Management (Business Module MVP) |
 | **0.5.0-alpha** | 2026-08-09 | Phase 5 — Dashboard Foundation & Widget Architecture |
 | **0.4.0-alpha** | 2026-08-04 | Phase 4 — Database Foundation |
 | **0.3.0-alpha** | 2026-08-04 | Phase 3 — Authentication |
@@ -610,6 +691,6 @@ This release primarily consists of documentation and project planning artifacts 
 
 **Format:** Keep a Changelog
 
-**Latest Release:** **v0.5.0-alpha**
+**Latest Release:** **v0.6.0-alpha**
 
-**Last Updated:** **2026-08-09**
+**Last Updated:** **2026-08-14**

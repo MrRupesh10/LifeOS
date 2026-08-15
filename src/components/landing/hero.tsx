@@ -1,14 +1,14 @@
 "use client";
 
-import type { ReactElement } from "react";
-import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/layout/container";
 import { GithubIcon } from "@/components/landing/github-icon";
+import { Container } from "@/components/layout/container";
+import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import type { ReactElement } from "react";
 
 /**
  * Faint grid backdrop — uses the existing --border token so no new
@@ -49,7 +49,7 @@ export function Hero(): ReactElement {
           {/* Version badge */}
           <span className="border-border bg-card/60 text-muted-foreground inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur">
             <span className="bg-chart-2 size-1.5 rounded-full" />
-            LifeOS v0.2
+            LifeOS v0.5.0-alpha
           </span>
 
           {/* Headline */}

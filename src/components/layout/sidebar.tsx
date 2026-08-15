@@ -1,13 +1,13 @@
 "use client";
 
+import { navigationConfig } from "@/config/navigation";
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
+import { useSidebarStore } from "@/stores/ui/sidebar-store";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect } from "react";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { siteConfig } from "@/config/site";
-import { navigationConfig } from "@/config/navigation";
-import { useSidebarStore } from "@/stores/ui/sidebar-store";
-import { cn } from "@/lib/utils";
 
 /**
  * Sidebar — main navigation for dashboard pages.
@@ -151,7 +151,9 @@ export function Sidebar() {
 
         {/* ── Bottom section ── */}
         <div className="border-t p-3">
-          {!isCollapsed && <p className="text-muted-foreground px-2 text-[0.65rem]">v0.1.0</p>}
+          {!isCollapsed && (
+            <p className="text-muted-foreground px-2 text-[0.65rem]">v0.5.0-alpha</p>
+          )}
         </div>
       </aside>
     </>

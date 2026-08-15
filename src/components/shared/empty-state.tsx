@@ -21,10 +21,13 @@ export function EmptyState({
   icon: Icon,
   headline,
   description,
-  buttonLabel = "Get Started",
+  buttonLabel,
+  onAction,
   className,
 }: EmptyStateProps) {
-  const label = buttonLabel;
+  // Only render a button when there is something to do: a live action or an
+  // explicit label (preserving the decorative button legacy callers used).
+  const showButton = Boolean(onAction) || Boolean(buttonLabel);
 
   return (
     <div className={cn("flex flex-col items-center justify-center py-16 text-center", className)}>
@@ -33,9 +36,11 @@ export function EmptyState({
       </div>
       <h2 className="text-lg font-semibold tracking-tight">{headline}</h2>
       <p className="text-muted-foreground mt-1.5 max-w-sm text-sm leading-relaxed">{description}</p>
-      <Button className="mt-6" size="lg">
-        {label}
-      </Button>
+      {showButton && (
+        <Button className="mt-6" size="lg" onClick={onAction}>
+          {buttonLabel ?? "Get Started"}
+        </Button>
+      )}
     </div>
   );
 }

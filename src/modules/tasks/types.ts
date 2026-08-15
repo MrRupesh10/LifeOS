@@ -36,3 +36,44 @@ export interface TaskWidgetData {
   /** Count of ALL pending tasks for the user. */
   pendingCount: number;
 }
+
+// ─── Write DTOs ────────────────────────────────────────────────
+/**
+ * Input for task creation. `priority` defaults to "medium" at the data
+ * layer; `dueDate`/`description` are optional. Validation (title required,
+ * lengths, enums) happens in Zod schemas at the action layer (M5), not here.
+ * Dates are ISO strings — the datasource converts them to Drizzle timestamps.
+ */
+export interface CreateTaskInput {
+  title: string;
+  description?: string | null;
+  dueDate?: string | null;
+  priority?: TaskPriority;
+}
+
+/**
+ * Input for editing an existing task. All fields optional (partial update).
+ * `status`/`completed_at` are managed by the datasource; note that toggling
+ * completion has its own dedicated path (`toggleComplete`) that keeps
+ * `status` and `completedAt` in lockstep.
+ */
+export interface UpdateTaskInput {
+  title?: string;
+  description?: string | null;
+  dueDate?: string | null;
+  priority?: TaskPriority;
+  status?: TaskStatus;
+}
+
+// ─── List options (service layer) ───────────────────────────────
+/**
+ * Task list filters. Semantics (enforced in the service):
+ * - `all`      — every task (pending + completed)
+ * - `today`    — non-completed tasks due today or overdue
+ * - `upcoming` — non-completed tasks due after today
+ * - `completed`— completed tasks
+ */
+export type TaskFilter = "all" | "today" | "upcoming" | "completed";
+
+/** Task list sort keys (enforced in the service). */
+export type TaskSort = "dueDate" | "priority" | "createdAt";

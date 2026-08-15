@@ -80,9 +80,6 @@ async function loadSlice<K extends WidgetKey>(
 // is trivial request metadata; `stats` is a cross-module summary computed from
 // the already-loaded slices — no new datasource/service calls.
 
-/** Placeholder owner name until auth supplies the real signed-in user (Phase 6+). */
-const OWNER_NAME = "Rupesh";
-
 /**
  * Loaded module slices indexed by key — a *mapped* type so the stats derivation
  * reads each slice with per-key narrowing (`loaded.tasks: WidgetState<TaskWidgetData>`).
@@ -117,7 +114,8 @@ function computeDashboardStats(s: LoadedSlices): DashboardStats {
  * becomes `{ status: "error" }` on its own slice; the rest render normally.
  */
 export async function getDashboardSnapshot(
-  userId = "current-user",
+  userId: string,
+  name: string,
 ): Promise<ServiceResult<DashboardSnapshot>> {
   const results = await Promise.all(SNAPSHOT_CONTRIBUTORS.map((c) => loadSlice(c, userId)));
 
@@ -132,7 +130,7 @@ export async function getDashboardSnapshot(
   const now = new Date();
   const welcome: WidgetState<WelcomeWidgetData> = {
     status: "success",
-    data: { name: OWNER_NAME, date: formatShortDate(now.toISOString()) },
+    data: { name, date: formatShortDate(now.toISOString()) },
   };
   const stats: WidgetState<DashboardStats> = {
     status: "success",

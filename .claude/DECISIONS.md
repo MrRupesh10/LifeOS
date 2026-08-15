@@ -513,4 +513,211 @@ That creates a new client on every React render — so every component re-render
 
 ---
 
-*Last updated: 2026-07-30 — Life Thin Phase 1*
+## ADR-015: User-Scoped Data Source — `getUserTasks` Naming
+
+**Date:** 2026-08-14  
+**Status:** Accepted
+
+### Context
+
+Phase 6 turns Tasks into the first DB-backed business module, but the Phase 5 `TaskDataSource` seam only exposed mock methods with no notion of a caller. In a multi-tenant app, every read and mutation must be scoped to the authenticated user. Without enforcement at the data-access layer, one user could query or mutate another's rows.
+
+### Decision
+
+`DrizzleTaskDataSource` enforces ownership **at the SQL boundary**, not in the service or UI:
+
+```typescript
+// Reads and mutations are always keyed by (user_id AND id).
+const rows = await db
+  .select()
+  .from(tasks)
+  .where(and(eq(tasks.user_id, userId), eq(tasks.id, id)));
+```
+
+- Reads take `userId` as their first parameter and filter every query by it
+- Mutations use composite `WHERE (user_id AND id)` predicates, so a wrong `userId` yields zero affected rows instead of touching another user's data
+- The method is named **`getUserTasks(userId)`** (not `getTasks`) to make the scoping contractual in the interface name
+- The `createTaskDataSource()` factory is preserved — callers (`task-service.ts`) construct a `DrizzleTaskDataSource` and receive the same interface
+
+### Consequences
+
+- **Upside:** ownership is enforced once, at the lowest layer, not defensively re-checked in every service/action; "cannot leak rows" is provable from the interface alone.
+- **Upside:** swapping mock ↔ Drizzle remains invisible to services and widgets (Phase 5 pattern intact).
+- **Downside:** every query is slightly more verbose (composite predicates); encapsulated, so callers never see it.
+
+### Alternatives
+
+| Alternative | Why Not Selected |
+|-------------|------------------|
+| Scoping in the service layer | The service trusts whatever the datasource returns; a buggy query leaks rows. Ownership must live at the query boundary. |
+| A `WHERE user_id` column excluded from the interface | Hides the invariant instead of making it part of the contract; `getUserTasks` names it explicitly. |
+
+---
+
+## ADR-016: "Today" / "Upcoming" Filter Semantics
+
+**Date:** 2026-08-14  
+**Status:** Accepted
+
+### Context
+
+The Tasks page exposes three read filters: All, Today, and Upcoming. The exact boundary between "today" and "upcoming" was ambiguous. Readability meant different things to different people — and a boundary defined by UTC would slip a calendar day for users near the dateline.
+
+### Decision
+
+Defined in `task-service.ts` over the stored `due_date` (UTC timestamps, compared by their `YYYY-MM-DD` slice against an India-zone "today"):
+
+- **`today`** → non-completed rows with `dueDate` **on or before** today (`due ≤ today`). Overdue tasks still belong to "today"; they do not disappear.
+- **`upcoming`** → non-completed rows with `dueDate` **strictly after** today (`due > today`).
+- Completed tasks never appear under Today or Upcoming — they surface only under All and Completed.
+
+### Consequences
+
+- Overdue tasks remain actionable (visible under Today) instead of silently vanishing.
+- The two filters are mutually exclusive and jointly exhaustive over dated, non-completed tasks — an intuitive mental model for the user.
+- The dashboard `dueToday` slice uses the same India-zone "today", so the page and the "Today's Tasks" dashboard widget agree (ADR-017).
+
+### Alternatives
+
+| Alternative | Why Not Selected |
+|-------------|------------------|
+| `today` = due exactly today (`due === today`) | Overdue items would drop off "today" as soon as they slip a day, making them appear lost. |
+| `upcoming` = due today or later (`due ≥ today`) | Overlaps with `today`; a task can't be both — violates the exclusive-dates model. |
+
+---
+
+## ADR-017: Asia/Kolkata "Today" via `Intl.DateTimeFormat` (Timezone Fix)
+
+**Date:** 2026-08-14  
+**Status:** Accepted (corrects a Phase 6 verification bug)
+
+### Context
+
+Early Phase 6 computed "today" with `new Date().toISOString().slice(0, 10)` — i.e. **UTC** date. For an application timezone of `Asia/Kolkata` (+05:30), the UTC boundary could slip a calendar day: a task that was "due today, 9am" in Kolkata was already one day old in UTC. Verification caught this: the "Today"/"Upcoming"/summary/dashboard date behavior was wrong for the owner's region.
+
+### Decision
+
+"Today" is derived once, from a single source of truth, in the local application zone:
+
+```typescript
+const APP_TIMEZONE = "Asia/Kolkata";
+
+function todayKey(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: APP_TIMEZONE }).format(new Date());
+}
+```
+
+- `Intl.DateTimeFormat` with `timeZone` yields the zone-correct civil date, independent of the server's clock/zone.
+- `en-CA` is the locale trick that returns a zero-padded `YYYY-MM-DD` string (`2026-08-15`) directly comparable to `due_date.slice(0, 10)`.
+- `APP_TIMEZONE` is a single constant consumed by `todayKey`, the service filters (ADR-016), the summary, and the dashboard — one place to change, everywhere stays consistent.
+
+### Consequences
+
+- **Upside:** date boundaries match what the user's calendar says in Kolkata; no more silent day-off-by-one.
+- **Trade-off:** date logic is now TZ-aware rather than naive UTC. That is the correct trade for a real, region-specific user (no SSR/hydration risk here — this runs on the server).
+
+### Alternatives
+
+| Alternative | Why Not Selected |
+|-------------|------------------|
+| UTC `toISOString().slice(0, 10)` | Wrong civil date for `+05:30`; the bug this ADR fixes. |
+| Store dates with a timezone offset column | Overkill for a single, known application zone; adds complexity for little value today. |
+
+---
+
+## ADR-018: Shared Validation File — `validation.ts`
+
+**Date:** 2026-08-14  
+**Status:** Accepted
+
+### Context
+
+Server Actions and client forms both need to validate task input — the action before it mutates, the form before it submits. Keeping two copies of the Zod schema invites drift: a form that permits a field the action rejects, or vice versa.
+
+### Decision
+
+A single shared module `src/modules/tasks/validation.ts` is the **one** source of truth for task input schemas:
+
+```typescript
+export const createTaskSchema = z.object({ ... });
+// consumed by both TaskForm (react-hook-form resolver) and createTaskAction (server parse)
+```
+
+- Both the client form and the server actions import from this one file.
+- Because `validation.ts` contains only shared, domain-agnostic Zod schemas, it is safe to import from both client and server components (no server-only secrets).
+- Zod `z.try`/`safeParse` on the server is the first gate before any service call.
+
+### Consequences
+
+- **Upside:** form and action can never disagree about allowed input; changing the shape is a one-file edit.
+- **Note:** schemas live in the module (business-boundary), so `lib/` stays free of domain validation.
+
+### Alternatives
+
+| Alternative | Why Not Selected |
+|-------------|------------------|
+| Duplicate schema in the form and the action | Drift risk — exactly what shared validation eliminates. |
+| Server Actions accept `FormData` and re-validate with a separate schema | Still two schemas, just differently named. |
+
+---
+
+## ADR-019: Kebab-Case Module Component Naming
+
+**Date:** 2026-08-14  
+**Status:** Accepted (with a reconciliation note)
+
+### Context
+
+CLAUDE.md's naming table said **PascalCase** for component files (`TaskCard.tsx`), yet the Phase 6 Tasks components were written as **kebab-case** (`task-item.tsx`, `task-form.tsx`, `task-filter-bar.tsx`, `task-list.tsx`). This mismatch needed to be resolved rather than silently papered over.
+
+### Decision
+
+Career/utility modules (Tasks, and going forward) use **kebab-case filenames** for module components that co-live with shared PascalCase components in `src/components/`:
+
+- Kebab-case visually disambiguates module-owned, feature-specific components from framework/shared UI components.
+- It reads naturally for multi-word names that are single concerns (`task-filter-bar.tsx`) without CamelCase scannability.
+- This is a deliberate divergence from the CLAUDE.md table, recorded here to reconcile the two during the Phase 6 docs pass.
+
+### Consequences
+
+- **Upside:** at a glance you can tell module-scoped component from shared component.
+- **Action item:** update the CLAUDE.md naming table to list kebab-case as the convention for module components, with PascalCase reserved for shared `src/components/` files. (Filed as part of this release's docs pass.)
+
+---
+
+## ADR-020: Varchar Enum Precedent (no `pgEnum` for Simple Domains)
+
+**Date:** 2026-08-14  
+**Status:** Accepted
+
+### Context
+
+Task `status` (pending/in_progress/completed) and `priority` (low/medium/high) are enums in the domain. Drizzle supports native `pgEnum` types, but LifeOS already stored the user `role` as a plain `varchar` with a default and application-side validation.
+
+### Decision
+
+Follow the `users.role` precedent — store `status` and `priority` as **varchar with a DB default**, validating allowed values in the shared Zod schema (ADR-018) and narrowing them with TypeScript unions:
+
+```typescript
+export const taskPrioritySchema = z.enum(["low", "medium", "high"]);
+// DB column: varchar not null default 'medium'
+```
+
+- No Postgres-level enum type migration for these simple, stable sets.
+- Allowed values are enforced at the application boundary (Zod) before they reach SQL.
+
+### Consequences
+
+- **Upside:** a column change is a trivial `ALTER` (varchar) rather than a Postgres enum migration; consistent with Phase 4's `users.role` decision.
+- **Downside:** nothing at the DB layer stops an invalid value written outside the app; acceptable because every write path in LifeOS funnel through validated server actions.
+
+### Alternatives
+
+| Alternative | Why Not Selected |
+|-------------|------------------|
+| Drizzle `pgEnum` | More ceremony for stable two/three-value sets; adds a Postgres type migration per enum. |
+| Check constraints | Defensible, but fractures the house precedent: varchar + app-side validation is the established LifeOS style. |
+
+---
+
+*Last updated: 2026-08-15 — LifeOS Phase 6 (Task Management) — ADRs 015–020 recorded*

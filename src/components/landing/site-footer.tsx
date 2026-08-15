@@ -1,9 +1,9 @@
-import type { ReactElement } from "react";
-import Link from "next/link";
-import { Heart } from "lucide-react";
 import { GithubIcon } from "@/components/landing/github-icon";
-import { siteConfig } from "@/config/site";
 import { Container } from "@/components/layout/container";
+import { siteConfig } from "@/config/site";
+import { Heart } from "lucide-react";
+import Link from "next/link";
+import type { ReactElement } from "react";
 
 export function SiteFooter(): ReactElement {
   return (
@@ -12,7 +12,9 @@ export function SiteFooter(): ReactElement {
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex flex-col items-center gap-1 sm:items-start">
             <span className="text-sm font-semibold">{siteConfig.name}</span>
-            <span className="text-muted-foreground text-xs">v0.4.0 · {siteConfig.tagline}</span>
+            <span className="text-muted-foreground text-xs">
+              v0.5.0-alpha · {siteConfig.tagline}
+            </span>
           </div>
           <nav className="text-muted-foreground flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
             <Link

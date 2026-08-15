@@ -150,7 +150,8 @@ Shared data only travels through public interfaces.
 
 | What | Convention | Example |
 |------|-----------|---------|
-| Files (components) | PascalCase | `TaskCard.tsx` |
+| Files (shared components) | PascalCase | `TaskCard.tsx` in `src/components/` |
+| Files (module components) | kebab-case | `task-item.tsx` in `src/modules/<name>/components/` (see ADR-019) |
 | Files (utilities) | kebab-case | `format-date.ts` |
 | Functions | camelCase | `createTask()` |
 | Types | PascalCase | `Task` |
@@ -269,10 +270,10 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 
 ---
 
-Version: 0.5.0-alpha
+Version: 0.6.0-alpha
 
 Current Phase:
-Phase 6 — Business Schemas / Drizzle (Up Next)
+Phase 6 — Task Management (Business Module MVP) (Complete)
 
 Completed Phases
 ✓ Phase 0
@@ -281,7 +282,8 @@ Completed Phases
 ✓ Phase 3
 ✓ Phase 4
 ✓ Phase 5
-- **Project Status:** Phase 5 — Dashboard Foundation & Widget Architecture (complete, 8/8 milestones). Ready for Phase 6.
+✓ Phase 6
+- **Project Status:** Phase 6 — Task Management complete (M1–M12, verified 2026-08-14). First real DB-backed business module; migration 0001 applied to dev Neon DB; Asia/Kolkata timezone fix verified. Main docs + ADRs + Git release deferred to next session.
 
 ## Current Implementation State
 
@@ -368,9 +370,37 @@ Completed Phases
 
 **Full milestone detail + ADRs:** `.claude/plans/phase5-dashboard.md`.
 
+## Phase 6 — Task Management (Business Module MVP) (Complete)
+
+**Status:** M1–M12 complete (verified 2026-08-14). All gates green. This is the **first real DB-backed business module** — the first server-action module, the first user-scoped datasource, and the first domain table beyond auth.
+
+**Goal:** Take the Tasks module from a mock shell to a fully working, user-scoped CRUD feature over PostgreSQL via Drizzle, wired through the Phase 5 seams — while keeping the dashboard on the same data.
+
+**Milestones (M1 → M12):**
+- **M1 — Repo Audit:** read-only; confirmed the `TaskDataSource` seam, `getTaskSummary(userId, ds?)`, and migration `0001` is next. No drift.
+- **M2 — Schema + Migration:** `src/lib/db/schema/tasks.ts` + `0001_graceful_ultimo.sql`. `tasks` table: UUID PK, `user_id` → `users.id` **`ON DELETE CASCADE`**, 3 indexes (`tasks_user_id_idx`, `tasks_status_idx`, `tasks_due_date_idx`), varchar `priority`/`status` defaults (not pgEnum, matching `users.role`).
+- **M3 — Data Source:** `DrizzleTaskDataSource` replaces the mock behind the preserved factory. **User-scoped** — ownership enforced at the SQL boundary via `WHERE (user_id AND id)`; `getUserTasks(userId)`; mutations return serializable `ServiceResult` (never throw).
+- **M4 — Service Layer:** `getTasks(userId,{filter,sort})` + `today`/`upcoming`/`completed`/`create`/`update`/`delete`/`toggle`. `getTaskSummary` dashboard contract preserved byte-for-byte.
+- **M5 — Validation + Server Actions:** repo's first `actions.ts` — 4 auth-gated actions (`getSession()` → Zod parse → service → `revalidatePath`). Shared client+server Zod schemas in `validation.ts`.
+- **M6 — Tasks Page:** `/dashboard/tasks` rewritten as a server component — session guard, validated `searchParams`, `<Suspense>` skeleton, real error/empty/success states. No mock.
+- **M7 — Task CRUD UI:** `TaskForm` (RHF+zod) behind `NewTaskDialog` (create) and inline edit/delete dialogs in `TaskItem`. Mutations only via Server Actions. Client leaves (`TaskItem`, `NewTaskDialog`) over server list.
+- **M8 — Filtering + Sorting:** `TaskFilterBar` — **server-component, URL-driven** single-select controls (`?filter`/`?sort` write into `searchParams`; `aria-current`, `scroll={false}`). Zero new client surface, zero duplicated logic.
+- **M9 — Completion UX:** optimistic toggle via `useState` mirror + `useTransition`, exact rollback, `--chart-2` completed styling, Sonner feedback.
+- **M10 — Dashboard Real-Data:** `/dashboard` is auth-gated and now **`ƒ (Dynamic)`**; `getDashboardSnapshot(realUserId, name)` resolves the `OWNER_NAME` placeholder; Today's Tasks + `tasksDueToday` read the real user-scoped Task service through the untouched M5 registration seam.
+- **M11 — Error / Empty / Loading:** every read + all 5 mutation paths surface real loading/empty/error/success; delete dialog added `isDeleting` in-flight state. No fake fallbacks.
+- **M12 — Verification:** migration `0001` **applied directly to dev Neon DB in a single transaction** (auth tables matched `0000` but `__drizzle_migrations` was absent, so direct-apply, not claimed as a `db:migrate` run). DB reconcilied + verified. Read-only TaskService/DashboardService smoke ✅. SSR/auth-boundary checks ✅. All gates green. **Asia/Kolkata timezone bug fixed + manually verified.** Main docs + ADRs + Git release intentionally deferred to next session.
+
+**Key ADRs:** user-scoped datasource + `getUserTasks` naming · today/upcoming filter semantics (today = due on/before, non-completed; upcoming = strictly after) · sort-by-created newest-first · **Asia/Kolkata "today"** via `Intl.DateTimeFormat("en-CA",{timeZone})` replacing UTC `toISOString().slice(0,10)` (the M12 timezone fix — corrected Today/Upcoming/summary/dashboard date behavior) · shared-validation-file pattern · server-actions-as-mutation-boundary · delete-returns-`{success,message?}` · RHF/Zod optional-string `dueDate` · varchar-enum precedent.
+
+**Key architecture points:** `app/` only composes — business logic stays in the service, data access in the datasource, mutations only through Server Actions (auth-gated, ownership-scoped at SQL). Dependency arrow stays inward (Clean Architecture). `/dashboard/tasks` and `/dashboard` are now permanently `ƒ (Dynamic)` — do not re-statify. Component filenames in the Tasks module follow **kebab-case** (`task-item.tsx`, `task-form.tsx`, `task-filter-bar.tsx`) — noted precedent to reconcile with CLAUDE.md's PascalCase naming table during the docs pass. `MOCK_TASKS`/`mock-data` still feed the other 8 dashboard modules, unchanged.
+
+**Runtime notes for future modules:** migration `0001` was hand-applied, so if a dev DB is recreated, `pnpm db:migrate` should be verified (the `__drizzle_migrations` table now exists). Module-page template = **server component list + URL-driven filter bar + thin client leaf rows/dialogs + shared Zod + Server Actions**.
+
+**Full milestone detail + execution log:** `.claude/plans/phase6-task-implementation.md` and requirements in `.claude/plans/phase6-task-management.md`.
+
 
 
 Documentation must always be updated before tagging a release.
 ---
 
-*Last updated: 2026-08-08 — LifeOS Phase 5 Complete*
+*Last updated: 2026-08-14 — LifeOS Phase 6 (Task Management) implementation + verification complete; docs/ADRs/Git release pending*
