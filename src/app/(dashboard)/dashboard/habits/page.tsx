@@ -1,63 +1,59 @@
-import { Repeat, Flame, CheckCircle2, TrendingUp } from "lucide-react";
-import { SectionHeader } from "@/components/shared/section-header";
-import { StatsCard } from "@/components/shared/stats-card";
-import { EmptyState } from "@/components/shared/empty-state";
-import { Card } from "@/components/shared/card";
-import { Button } from "@/components/ui/button";
-import { MOCK_HABITS } from "@/lib/mock-data";
-import { cn } from "@/lib/utils";
+/**
+ * Habits page — pure server composition.
+ *
+ * Mirrors the Tasks page pattern exactly:
+ * 1. `getSession()` auth gate — redirect if absent
+ * 2. Parse `filter` from `searchParams` (safe default)
+ * 3. Compose `<SectionHeader>` + `<HabitListContent>` under `<Suspense>`
+ *
+ * All business logic lives in the service layer. The page is purely structural.
+ */
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
-export default function HabitsPage() {
-  const completedToday = MOCK_HABITS.filter((h) => h.completedToday);
-  const total = MOCK_HABITS.length;
-  const bestStreak = Math.max(...MOCK_HABITS.map((h) => h.streak));
+import { getSession } from "@/lib/auth/session";
+import { type HabitFilter } from "@/modules/habits/types";
+import { SectionHeader } from "@/components/shared/section-header";
+import HabitListContent from "@/modules/habits/components/habit-list";
+import NewHabitDialog from "@/modules/habits/components/new-habit-dialog";
+
+type SearchParams = Promise<{ filter?: string }>;
+
+const VALID_FILTERS: readonly HabitFilter[] = ["all", "active"];
+
+function asFilter(value: string | undefined): HabitFilter {
+  return (VALID_FILTERS as readonly string[]).includes(value ?? "")
+    ? (value as HabitFilter)
+    : "active";
+}
+
+function ListSkeleton() {
+  return (
+    <div className="border-border/60 animate-pulse space-y-2 rounded-lg border p-4" aria-hidden>
+      {Array.from({ length: 4 }, (_, i) => (
+        <div key={i} className="bg-muted h-12 rounded-md" />
+      ))}
+    </div>
+  );
+}
+
+export default async function HabitsPage({ searchParams }: { searchParams: SearchParams }) {
+  const session = await getSession();
+  if (!session?.user.id) redirect("/login");
+
+  const { filter: filterParam } = await searchParams;
+  const filter = asFilter(filterParam);
 
   return (
     <div className="flex flex-1 flex-col gap-6">
       <SectionHeader
         title="Habits"
         description="Build consistency with visual streak tracking."
-        action={<Button>+ New Habit</Button>}
+        action={<NewHabitDialog />}
       />
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsCard icon={Repeat} label="Total Habits" value={total} />
-        <StatsCard
-          icon={CheckCircle2}
-          label="Done Today"
-          value={`${completedToday.length}/${total}`}
-          trend={{ direction: "up", label: `${completedToday.length} complete` }}
-        />
-        <StatsCard icon={Flame} label="Best Streak" value={`${bestStreak} days`} />
-        <StatsCard
-          icon={TrendingUp}
-          label="Consistency"
-          value={`${Math.round((completedToday.length / total) * 100)}%`}
-        />
-      </div>
-
-      <Card variant="hover">
-        <h2 className="mb-4 text-sm font-semibold tracking-wide">Today</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {MOCK_HABITS.map((habit) => (
-            <div
-              key={habit.id}
-              className="border-border flex items-center justify-between rounded-lg border p-4"
-            >
-              <div>
-                <p className="text-sm font-medium">{habit.name}</p>
-                <p className="text-muted-foreground text-xs">
-                  {habit.frequency} · {habit.category}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-bold tabular-nums">{habit.streak}</span>
-                <span className="text-muted-foreground text-xs">days</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <Suspense fallback={<ListSkeleton />}>
+        <HabitListContent userId={session.user.id} filter={filter} />
+      </Suspense>
     </div>
   );
 }

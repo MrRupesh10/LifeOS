@@ -386,7 +386,7 @@ Task Model
 
 The task domain should support:
 
-Title
+### Title
 Description
 Due date
 Priority
@@ -397,7 +397,7 @@ User ownership
 
 Where appropriate, the existing Phase 4 database schema/types should be reused rather than creating duplicate task structures.
 
-Deliverables
+### Deliverables
 Task Data Layer
  Drizzle task schema verified against the Phase 4 database foundation
  Task repository/data source
@@ -504,12 +504,12 @@ Filter / Sort
 Delete
 
 and the dashboard automatically reflects the same task data through its existing aggregation architecture.
-Phase 7 — Habit Tracker
-Purpose
+## Phase 7 — Habit Tracker
+### Purpose
 
 Build the first complete habit-tracking module with persistent daily completion and streak tracking.
 
-Deliverables
+#### Deliverables
 
 Habit Data Layer
 
@@ -528,7 +528,7 @@ Toggle daily completion
 Streak calculation
 Empty/loading/error states
 
-Dashboard Integration
+### Dashboard Integration
 
 Habit summary uses the same Habit Service
 Dashboard habit widget reflects persistent habit data
@@ -541,7 +541,8 @@ Success Criteria
  Dashboard reflects real habit data
  User-scoped queries work
  Typecheck, lint, and build pass
-Phase 8 — Journal
+ 
+## Phase 8 — Journal
 Purpose
 
 Build the daily journal as a persistent rich-text writing experience.

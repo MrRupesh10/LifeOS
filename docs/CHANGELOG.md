@@ -6,6 +6,80 @@ The format is based on **Keep a Changelog** and the project adheres to **Semanti
 
 ---
 
+# [0.7.0-alpha] — 2026-08-16
+
+## Phase 7 — Habit Tracker (M1–M5)
+
+This release brings the second DB-backed business module to LifeOS: daily habit tracking with completion logs, streak calculation, and real dashboard integration. Built on the Phase 6 Task Management pattern — schema + migration, Drizzle DataSource, Service layer, Server Actions, server-composition page, client CRUD UI with weekly completion grid.
+
+### Added
+
+#### Database Schema & Migration
+
+- `habits` table (`src/lib/db/schema/habits.ts`, migration `0002_narrow_master_mold.sql`)
+  - UUID primary key, `user_id` → `users.id` FK with `ON DELETE CASCADE`
+  - Indexes: `habits_user_id_idx`, `habit_logs_habit_id_idx`
+  - Unique constraint `(habit_id, completed_on)` on `habit_logs` — one completion per habit per day
+  - `habit_logs.completed_on` as `date` column (not timestamp) — stores app-timezone calendar day
+- Migration `0002` applied to dev Neon DB directly in a single transaction (per M12 hand-apply precedent) and verified
+
+#### Data Source (Drizzle, user-scoped)
+
+- `DrizzleHabitDataSource` replaces the mock behind `createHabitDataSource()` factory
+- User-scoped reads/mutations; ownership at SQL boundary via `WHERE (user_id AND id)`
+- `getLogForDay()` — efficient single-row lookup for toggle reads
+- `getLogsFrom()` — date-ranged log queries for weekly grid
+- `setCompleted()` — upsert via `ON CONFLICT DO NOTHING` + delete off
+
+#### Service Layer
+
+- `getHabitViews(userId)` — active habits enriched with `currentStreak`, `bestStreak`, `completedToday`, `completedDays`
+- `getHabitSummary(userId)` — dashboard contract (`HabitWidgetData`) byte-identical to Phase 5
+- Streak calculation: current streak counts back from today (or through yesterday when today pending); best streak = max consecutive run over history
+- `toggleHabitCompletion()` — read-flip: checks today's log state then inserts or deletes
+
+#### Validation + Server Actions
+
+- `habits/actions.ts` — `createHabitAction`, `updateHabitAction`, `deleteHabitAction`, `toggleHabitCompletionAction`, `archiveHabitAction`, `unarchiveHabitAction`
+- Each action: `getSession()` auth gate → shared Zod parse → service → `revalidatePath`
+- Shared client+server Zod schemas in `validation.ts`
+
+#### Habits Page & UI
+
+- `/dashboard/habits` rewritten as a server component — session guard, validated `searchParams`, `<Suspense>` skeleton
+- `HabitForm` (react-hook-form + Zod) behind `NewHabitDialog` (create) and inline edit/archive/delete in `HabitItem`
+- Optimistic completion toggle via `useState` mirror + `useTransition`, exact rollback, Sonner feedback
+- `WeeklyGrid` — compact 7-day completion heatmap with app-timezone day keys, today emphasis, hover tooltips
+- Full error/empty/loading handling across all read and mutation paths
+
+#### Dashboard Integration
+
+- `getHabitSummary` registered in `SNAPSHOT_CONTRIBUTORS` — dashboard renders real habit streaks/logs from PostgreSQL
+- `HabitStreaksWidget` receives real `HabitWidgetData` (no mock)
+
+### Changed
+
+- `HabitView` enriched with `completedDays: string[]` for weekly grid rendering
+- `habit_logs` carries no `user_id` — ownership scoped through `habits.user_id` join (minimal schema, per approved plan)
+
+### Architecture Decisions
+
+- `habit_logs` as rows (not boolean column) — upsert log table is the streak source of truth
+- `completed_on` as app-zone calendar `date` string for streak correctness
+- Single-toggle read-flip pattern (client never sends boolean)
+- Kebab-case component filenames (`habit-form.tsx`, `habit-item.tsx`, `habit-list.tsx`, `weekly-grid.tsx`)
+
+### Verification
+
+- ✅ `pnpm typecheck`
+- ✅ `pnpm lint`
+- ✅ `pnpm build`
+- ✅ Migration `0002` applied and verified (table/FK/indexes/unique constraint)
+- ✅ DB smoke test: toggle ON/OFF, ownership, cascade-delete, cross-user isolation, 5 streak edge cases
+- ✅ DashboardService smoke/regression
+
+---
+
 # [0.6.0-alpha] — 2026-08-14
 
 ## Phase 6 — Task Management (Business Module MVP)

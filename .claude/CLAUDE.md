@@ -270,10 +270,10 @@ Branch naming: `<type>/<short-description>` — e.g. `feat/task-creation`
 
 ---
 
-Version: 0.6.0-alpha
+Version: 0.7.0-alpha
 
-Current Phase:
-Phase 6 — Task Management (Business Module MVP) (Complete)
+Current Phase
+Phase 7 — Habit Tracker (Complete)
 
 Completed Phases
 ✓ Phase 0
@@ -283,7 +283,12 @@ Completed Phases
 ✓ Phase 4
 ✓ Phase 5
 ✓ Phase 6
-- **Project Status:** Phase 6 — Task Management complete (M1–M12, verified 2026-08-14). First real DB-backed business module; migration 0001 applied to dev Neon DB; Asia/Kolkata timezone fix verified. Main docs + ADRs + Git release deferred to next session.
+✓ Phase 7
+- **Project Status:** Phase 7 — Habit Tracker complete (M1–M6, verified 2026-08-16). Second DB-backed business module; migration 0002 applied to dev Neon DB; streak calculation verified; dashboard integration real. Git tagged v0.7.0-alpha.
+
+## Current Implementation State
+
+## Phase 0 — Documentation & Reference
 
 ## Current Implementation State
 
@@ -370,6 +375,28 @@ Completed Phases
 
 **Full milestone detail + ADRs:** `.claude/plans/phase5-dashboard.md`.
 
+## Phase 7 — Habit Tracker (Complete)
+
+**Status:** M1–M6 complete (verified 2026-08-16). All gates green. Second DB-backed business module — second server-action module, second user-scoped datasource, second domain table beyond auth (`habits` + `habit_logs`).
+
+**Goal:** Take the Habits module from a mock shell to a fully working, user-scoped habit tracker with daily completion logging, streak calculation, and real dashboard integration — following the exact Phase 6 pattern.
+
+**Milestones (M1 → M6):**
+- **M1 — Schema + Migration:** `src/lib/db/schema/habits.ts` + `0002_narrow_master_mold.sql`. `habits` table (UUID PK, `user_id` → `users.id` **`ON DELETE CASCADE`**), `habit_logs` table (unique `(habit_id, completed_on)`, `ON DELETE CASCADE` via habit), indexes: `habits_user_id_idx`, `habit_logs_habit_id_idx`. `completed_on` as `date` column (app-timezone calendar day, not timestamp).
+- **M2 — Data Source + Service:** Drizzle `HabitDataSource` behind factory — user-scoped, logs scoped through `habits.user_id` join (logs carry no `user_id`). `HabitService` — CRUD, `setHabitCompletion`, `getHabitViews` (streaks+completedToday), `getHabitSummary` (byte-identical widget shape). `getLogForDay()` for efficient toggle reads.
+- **M3 — Validation + Server Actions:** `habits/actions.ts` — 6 auth-gated actions (create/update/delete/toggle/archive/unarchive). Shared Zod schemas in `validation.ts`. Single read-flip toggle pattern.
+- **M4 — Habit UI:** Server-composed page (`habits/page.tsx`), `HabitForm` (RHF+Zod), `NewHabitDialog`, `HabitItem` (client leaf: optimistic toggle + edit/delete/archive dialogs), `HabitList` (server-rendered), `WeeklyGrid` (compact 7-day completion heatmap). `HabitView` enriched with `completedDays: string[]`.
+- **M5 — Dashboard Integration:** Verified real `getHabitSummary` registered in `SNAPSHOT_CONTRIBUTORS` (wired during M2). Dashboard renders real habit streaks from PostgreSQL. Zero mock references confirmed.
+- **M6 — Verification + Documentation:** `typecheck` ✅ `lint` ✅ `build` ✅ (24 routes). Migration `0002` applied to dev Neon DB. DB smoke: toggle ON/OFF, ownership, cascade-delete, cross-user isolation, 5 streak edge cases. docs/CLAUDE.md/CHANGELOG updated, git tag `v0.7.0-alpha` created.
+
+**Key ADRs:** `habit_logs` as rows (upsert log table is the streak source of truth) · `completed_on` as app-zone calendar `date` string · single-toggle read-flip · kebab-case component filenames (`habit-form.tsx`, `habit-item.tsx`, `habit-list.tsx`, `weekly-grid.tsx`).
+
+**Key architecture points:** `habit_logs` has NO `user_id` — ownership scoped through `habits.user_id` join (minimal schema). Streak calculation: current streak counts back from today (or through yesterday when today pending); best streak = max consecutive run. Module-page template = **server component list + optimistic toggle client leaves + weekly grid + shared Zod + Server Actions**.
+
+**Runtime notes:** migration `0002` hand-applied; if dev DB recreated, verify `pnpm db:migrate`. Weekly grid uses `--chart-2` for completed cells; compact single-row design with 2px circles + hover tooltips.
+
+**Full milestone detail + execution log:** `.claude/plans/phase7-habit-tracker.md`.
+
 ## Phase 6 — Task Management (Business Module MVP) (Complete)
 
 **Status:** M1–M12 complete (verified 2026-08-14). All gates green. This is the **first real DB-backed business module** — the first server-action module, the first user-scoped datasource, and the first domain table beyond auth.
@@ -403,4 +430,4 @@ Completed Phases
 Documentation must always be updated before tagging a release.
 ---
 
-*Last updated: 2026-08-14 — LifeOS Phase 6 (Task Management) implementation + verification complete; docs/ADRs/Git release pending*
+*Last updated: 2026-08-16 — LifeOS Phase 7 (Habit Tracker) implementation + verification complete; v0.7.0-alpha tagged*

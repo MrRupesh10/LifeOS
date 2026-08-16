@@ -10,14 +10,13 @@
 | Field | Value |
 |-------|-------|
 | **Project** | LifeOS |
-| **Current Version** | **v0.6.0-alpha** |
-| **Current Phase** | **Phase 6 — Task Management (Business Module MVP) ✅ Complete** |
-| **Next Phase** | **Phase 7 — Habit Tracker** |
-| **Current Sprint** | Sprint 3 |
-| **Sprint Focus** | Task Management, Business Schemas & Server Actions |
+| **Current Version** | **v0.7.0-alpha** |
+| **Current Phase** | **Phase 7 — Habit Tracker (Complete)** |
+| **Current Sprint** | Sprint 4 |
+| **Sprint Focus** | Habit Tracker Implementation & Release |
 | **Repository Status** | Active Development |
 | **License** | MIT |
-| **Last Updated** | 2026-08-14 |
+| **Last Updated** | 2026-08-16 |
 
 ---
 
@@ -32,7 +31,7 @@
 | Phase 4 | Database Foundation | ✅ Complete |
 | Phase 5 | Dashboard | ✅ Complete |
 | Phase 6 | Task Management | ✅ Complete |
-| Phase 7 | Habit Tracker | ⏳ Planned |
+| Phase 7 | Habit Tracker | ✅ Complete |
 | Phase 8 | Journal | ⏳ Planned |
 | Phase 9 | Notes | ⏳ Planned |
 | Phase 10 | Projects | ⏳ Planned |
@@ -63,7 +62,7 @@
 | API Infrastructure | 🚧 |
 | Dashboard Logic | ✅ |
 | Task Module | ✅ |
-| Habit Module | ⏳ |
+| Habit Module | ✅ Complete |
 | Journal | ⏳ |
 | Notes | ⏳ |
 | Projects | ⏳ |
@@ -730,7 +729,7 @@ Production build verified: 24 routes, `/dashboard` prerendered static (`○`).
 
 **Status:** ✅ Complete
 
-**Release:** `v0.6.0-alpha`
+**Release:** `v0.7.0-alpha`
 
 **Objective**
 
@@ -857,6 +856,7 @@ The following systems are currently implemented and fully functional in the appl
 | **Dashboard Architecture** | ✅ | `ServiceResult` contract, Module DataSources + Services, aggregator (`getDashboardSnapshot`) |
 | **Dashboard Widgets** | ✅ | 11 pure-presentational widgets, each fed its own typed `WidgetState` slice |
 | **Task Module** | ✅ | Real DB-backed CRUD — user-scoped `tasks` table, Server Actions + Zod, server-composition page, URL-driven filter/sort, optimistic completion toggle, dashboard integration |
+| **Habit Module** | ✅ | Real DB-backed CRUD — user-scoped `habits` + `habit_logs` tables, Server Actions + Zod, server-composition page, daily completion toggle, weekly completion grid, streak calculation, dashboard integration |
 
 ---
 
@@ -889,14 +889,14 @@ The following systems are currently implemented and fully functional in the appl
 
 | Metric | Value |
 |---------|------:|
-| Current Version | **0.6.0-alpha** |
+| Current Version | **0.7.0-alpha** |
 | Completed Phases | **7 (Phase 0–6)** |
 | Completed Milestones | **61** |
 | Production Routes | **24** |
 | Navigation Modules | **14** |
 | Shared UI Components | **15+** |
 | Authentication Pages | **5** |
-| Database Tables | **Auth + `tasks`** |
+| Database Tables | **Auth + `tasks` + `habits` + `habit_logs`** |
 | Documentation Files | **15+** |
 | Git Tags | **v0.0.1 → v0.5.0-alpha** (v0.6.0 release pending) |
 | Build Status | ✅ Passing |
@@ -984,6 +984,7 @@ The next development phase focuses on the first business module — Task Managem
 | **0.3.0-alpha** | 2026-08-04 | Authentication |
 | **0.4.0-alpha** | 2026-08-04 | Database Foundation |
 | **0.5.0-alpha** | 2026-08-09 | Dashboard Foundation & Widget Architecture |
+| **0.7.0-alpha** | 2026-08-16 | Habit Tracker |
 | **0.6.0-alpha** | 2026-08-14 | Task Management (Business Module MVP) |
 
 ---
@@ -1002,7 +1003,7 @@ The next development phase focuses on the first business module — Task Managem
 
 ## Current Focus
 
-Preparing Phase 7 — Habit Tracker, the next business module built on the Task Management patterns (schema + migration, Server Actions, server-composition page, URL-driven filtering, dashboard integration).
+Phase 7 — Habit Tracker Complete (M1–M6). Real DB-backed habit tracker: schema + migration `0002`, Drizzle DataSource, streak calculation, Server Actions, server-composition page, weekly completion grid, dashboard integration, docs, v0.7.0-alpha release.
 
 ---
 
@@ -1022,16 +1023,18 @@ All quality gates currently pass successfully.
 | Middleware Protection | ✅ Verified |
 | Dashboard Build (24 routes) | ✅ Verified |
 | Migration `0001` applied + verified | ✅ Verified |
+| Migration `0002` applied + verified | ✅ Verified |
 | TaskService / DashboardService smoke | ✅ Verified |
+| HabitService / DashboardService smoke | ✅ Verified |
 | SSR / auth-boundary checks | ✅ Verified |
 | Authenticated browser/manual E2E | ✅ Verified |
 
 ---
 
-*Last Updated: 2026-08-14*
+*Last Updated: 2026-08-16*
 
-**Current Release:** `v0.6.0-alpha`
+**Current Release:** `v0.7.0-alpha`
 
-**Project Status:** Phase 6 — Task Management (Business Module MVP) Complete ✅
+**Project Status:** Phase 7 — Habit Tracker Complete ✅
 
-**Next Target:** Phase 7 — Habit Tracker
+**Next Target:** Phase 8 — Journal

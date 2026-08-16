@@ -24,7 +24,7 @@ LifeOS fixes that. It's one app, one experience, one data model, where everythin
 
 | Version | Status |
 |----------|--------|
-| **v0.6.0-alpha** | ✅ Current Release |
+| **v0.7.0-alpha** | ✅ Current Release |
 | Phase 0 | ✅ Complete |
 | Phase 1 | ✅ Complete |
 | Phase 2 | ✅ Complete |
@@ -32,7 +32,7 @@ LifeOS fixes that. It's one app, one experience, one data model, where everythin
 | Phase 4 | ✅ Complete |
 | Phase 5 | ✅ Complete |
 | Phase 6 | ✅ Complete |
-| Phase 7 | 🚧 Next |
+| Phase 7 | ✅ Complete |
 
 ---
 
@@ -387,6 +387,21 @@ Completed
 
 ---
 
+## ✅ Phase 7 — Habit Tracker
+
+Completed
+
+* Habits & Habit Logs Schema + Migration `0002`
+* Drizzle Habit DataSource (user-scoped, ownership at SQL boundary)
+* Streak Calculation Service (current + best streak)
+* Server Actions (CRUD + completion toggle + archive)
+* Server-Composition Habits Page
+* Weekly Completion Grid
+* Dashboard Integration (real HabitStreaksWidget data)
+* M6 Verification & Release
+
+---
+
 ## ✅ Phase 6 — Task Management, Database Integration & Verification
 
 Completed
@@ -402,10 +417,9 @@ Completed
 * M12 Verification Gates & Implementation Report
 
 ---
-S
+
 ## 🚧 Upcoming
 
-- Phase 7 — Habit Tracker
 - Phase 8 — Journal
 - Phase 9 — Notes
 - Phase 10 — Projects
@@ -490,8 +504,8 @@ MIT License
 
 ---
 
-> **Current Release:** **v0.6.0-alpha**
+> **Current Release:** **v0.7.0-alpha**
 >
-> **Last Updated:** 2026-08-15
+> **Last Updated:** 2026-08-16
 >
-> **Status:** Phase 6 Complete • Task Management, Database Integration & Verification
+> **Status:** Phase 7 Complete • Habit Tracker

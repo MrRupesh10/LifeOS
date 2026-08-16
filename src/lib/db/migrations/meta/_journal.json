@@ -15,6 +15,13 @@
       "when": 1786315018988,
       "tag": "0001_graceful_ultimo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786874766860,
+      "tag": "0002_narrow_master_mold",
+      "breakpoints": true
     }
   ]
 }

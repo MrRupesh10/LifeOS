@@ -12,4 +12,5 @@
  * relational API — a single wiring point, zero scattered paths.
  */
 export * from "./schema/auth";
+export * from "./schema/habits";
 export * from "./schema/tasks";
